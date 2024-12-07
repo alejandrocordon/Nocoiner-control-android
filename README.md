@@ -1,5 +1,9 @@
 # Nocoiner Control App
 
+
+![Nocoiner control](/images/nocoinerphoto.png)
+
+
 ## Descripción
 **Nocoiner Control App** es una aplicación Android desarrollada para gestionar dispositivos **Nocoiner** personalizados por **Natio21**. Los Nocoiners funcionan como calefactores mientras minan bitcoin, optimizando la eficiencia energética. 
 
