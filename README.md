@@ -11,15 +11,6 @@ La app permite controlar la potencia calorífica, configurar pools de minería y
 - **Configuración:** Personaliza los parámetros del pool de minería (URL, usuario, contraseña).
 - **Descubrimiento Automático:** Busca dispositivos Nocoiner en la red local al iniciar la app.
 
-## Tecnologías
-- **Lenguaje:** Kotlin
-- **Arquitectura:** MVVM
-- **Librerías:**
-  - Retrofit (APIs)
-  - Room (configuración local)
-  - Material Design (UI)
-  - Zeroconf/mDNS (descubrimiento en red)
-
 ## Requisitos
 1. Dispositivo Android (8.0+).
 2. Red local con dispositivos Nocoiner conectados.
