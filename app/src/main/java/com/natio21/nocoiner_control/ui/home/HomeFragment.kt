@@ -1,6 +1,7 @@
 package com.natio21.nocoiner_control.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ class HomeFragment : Fragment() {
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
+        
         homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }

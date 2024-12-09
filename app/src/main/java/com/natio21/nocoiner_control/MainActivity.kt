@@ -3,6 +3,7 @@ package com.natio21.nocoiner_control
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.natio21.nocoiner_control.databinding.ActivityMainBinding
 import com.natio21.nocoiner_control.di.NsdServiceManager
+import com.natio21.nocoiner_control.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var nsdServiceManager: NsdServiceManager
+    private val homeViewModel: HomeViewModel by viewModels()
 
     @Inject
     lateinit var minerApiService: MinerApiService
@@ -59,11 +62,10 @@ class MainActivity : AppCompatActivity() {
 
         // Call the API to get miner info
         lifecycleScope.launch {
-            try {
-                val minerInfo = minerApiService.getMinerInfo()
-                Log.d("MinerInfo", minerInfo.toString())
-            } catch (e: Exception) {
-                Log.e("MinerInfo", e.message.toString())
+            homeViewModel.minerInfo.collect { minerInfo ->
+                minerInfo?.let {
+                    Log.d("MinerInfo", it.toString())
+                }
             }
         }
 

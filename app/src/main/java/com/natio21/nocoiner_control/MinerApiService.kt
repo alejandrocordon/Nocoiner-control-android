@@ -5,4 +5,4 @@ import retrofit2.http.GET
 interface MinerApiService {
     @GET("api/v1/info")
     suspend fun getMinerInfo(): MinerInfo
-}
+}   
