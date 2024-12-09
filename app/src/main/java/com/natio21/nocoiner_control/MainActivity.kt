@@ -24,9 +24,11 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var nsdServiceManager: NsdServiceManager
 
     @Inject
     lateinit var minerApiService: MinerApiService
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,13 +69,18 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        val nsdServiceManager = NsdServiceManager(application)
-        nsdServiceManager.discoverAntminerServices()
+        nsdServiceManager = NsdServiceManager(application)
+        nsdServiceManager.discoverServices()
 
        // Para obtener la lista de servicios descubiertos:
-       val antminerServices = nsdServiceManager.getDiscoveredServices()
-         Log.d("AntminerServices", antminerServices.toString())
+       //val antminerServices = nsdServiceManager.getDiscoveredServices()
+       //  Log.d("AntminerServices", antminerServices.toString())
 
+    }
+
+    override fun onStop() {
+        nsdServiceManager.stopDiscovery()
+        super.onStop()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

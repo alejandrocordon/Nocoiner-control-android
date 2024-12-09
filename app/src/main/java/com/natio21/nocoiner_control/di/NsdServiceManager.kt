@@ -8,69 +8,68 @@ import android.util.Log
 //TAG
 private const val TAG = "NsdServiceManager"
 
-class NsdServiceManager(private val context: Context) {
+class NsdServiceManager(context: Context) {
 
-    private val nsdManager: NsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
-    private var discoveryListener: NsdManager.DiscoveryListener? = null
-    private val discoveredServices = mutableListOf<NsdServiceInfo>()
+    private val nsdManager = context.getSystemService(Context.NSD_SERVICE) as NsdManager
+    private val serviceType = "_http._tcp." // Tipo de servicio a descubrir
+    private val targetServiceName = "Antminer" // Nombre del servicio objetivo
 
-    fun discoverAntminerServices() {
-        stopDiscovery() // Detener cualquier descubrimiento anterior
+    private val discoveryListener = object : NsdManager.DiscoveryListener {
+        override fun onDiscoveryStarted(regType: String) {
+            Log.d(TAG, "Descubrimiento de servicios iniciado")
+        }
 
-        discoveryListener = object : NsdManager.DiscoveryListener {
-            override fun onDiscoveryStarted(serviceType: String) {
-                Log.d(TAG, "Descubrimiento iniciado para el tipo de servicio: $serviceType")
-            }
+        override fun onServiceFound(serviceInfo: NsdServiceInfo) {
+            Log.d(TAG, "Servicio encontrado: ${serviceInfo.serviceName}")
 
-            override fun onServiceFound(serviceInfo: NsdServiceInfo) {
-                Log.d(TAG, "Servicio encontrado: ${serviceInfo.serviceName}")
-                if (serviceInfo.serviceName.contains("Antminer", ignoreCase = true)) {
-                    Log.d(TAG, "Servicio Antminer detectado: ${serviceInfo.serviceName}")
-                    nsdManager.resolveService(serviceInfo, object : NsdManager.ResolveListener {
-                        override fun onServiceResolved(resolvedServiceInfo: NsdServiceInfo) {
-                            Log.d(TAG, "Servicio resuelto: ${resolvedServiceInfo.serviceName} en ${resolvedServiceInfo.host.hostAddress}:${resolvedServiceInfo.port}")
-                            discoveredServices.add(resolvedServiceInfo)
-                        }
+            //show in log all serviceinfo
+            Log.d(TAG, "ServiceInfo: $serviceInfo")
 
-                        override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
-                            Log.e(TAG, "Fallo al resolver el servicio: ${serviceInfo.serviceName}, código de error: $errorCode")
-                        }
-                    })
-                }
-            }
-
-            override fun onServiceLost(serviceInfo: NsdServiceInfo) {
-                Log.e(TAG, "Servicio perdido: ${serviceInfo.serviceName}")
-                discoveredServices.remove(serviceInfo)
-            }
-
-            override fun onDiscoveryStopped(serviceType: String) {
-                Log.i(TAG, "Descubrimiento detenido para el tipo de servicio: $serviceType")
-            }
-
-            override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
-                Log.e(TAG, "Fallo al iniciar el descubrimiento para el tipo de servicio: $serviceType, código de error: $errorCode")
-                stopDiscovery()
-            }
-
-            override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
-                Log.e(TAG, "Fallo al detener el descubrimiento para el tipo de servicio: $serviceType, código de error: $errorCode")
-                stopDiscovery()
+            if (serviceInfo.serviceName.contains(targetServiceName, ignoreCase = true)) {
+                nsdManager.resolveService(serviceInfo, resolveListener)
             }
         }
 
-        nsdManager.discoverServices("_http._tcp.", NsdManager.PROTOCOL_DNS_SD, discoveryListener)
+        override fun onServiceLost(serviceInfo: NsdServiceInfo) {
+            Log.e(TAG, "Servicio perdido: ${serviceInfo.serviceName}")
+        }
+
+        override fun onDiscoveryStopped(serviceType: String) {
+            Log.i(TAG, "Descubrimiento de servicios detenido")
+        }
+
+        override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
+            Log.e(TAG, "Fallo al iniciar el descubrimiento: Error code:$errorCode")
+            nsdManager.stopServiceDiscovery(this)
+        }
+
+        override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
+            Log.e(TAG, "Fallo al detener el descubrimiento: Error code:$errorCode")
+            nsdManager.stopServiceDiscovery(this)
+        }
+    }
+
+    private val resolveListener = object : NsdManager.ResolveListener {
+        override fun onServiceResolved(serviceInfo: NsdServiceInfo) {
+            val hostAddress = serviceInfo.host.hostAddress
+            val port = serviceInfo.port
+            Log.d(TAG, "Servicio resuelto: $hostAddress:$port")
+            // Aquí puedes manejar la dirección IP y el puerto del servicio encontrado
+        }
+
+        override fun onResolveFailed(serviceInfo: NsdServiceInfo, errorCode: Int) {
+            Log.e(TAG, "Fallo al resolver el servicio: Error code:$errorCode")
+        }
+    }
+
+    fun discoverServices() {
+        Log.d(TAG, "Iniciando descubrimiento de servicios")
+        nsdManager.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
     }
 
     fun stopDiscovery() {
-        discoveryListener?.let {
-            nsdManager.stopServiceDiscovery(it)
-        }
-        discoveryListener = null
-    }
-
-    fun getDiscoveredServices(): List<NsdServiceInfo> {
-        return discoveredServices
+        Log.d(TAG, "Deteniendo descubrimiento de servicios")
+        nsdManager.stopServiceDiscovery(discoveryListener)
     }
 
     companion object {
