@@ -1,6 +1,7 @@
 package com.natio21.nocoiner_control
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -11,13 +12,22 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.natio21.nocoiner_control.databinding.ActivityMainBinding
-import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
+import com.natio21.nocoiner_control.di.NsdServiceManager
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+    @Inject
+    lateinit var minerApiService: MinerApiService
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +54,26 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Call the API to get miner info
+        lifecycleScope.launch {
+            try {
+                val minerInfo = minerApiService.getMinerInfo()
+                Log.d("MinerInfo", minerInfo.toString())
+            } catch (e: Exception) {
+                Log.e("MinerInfo", e.message.toString())
+            }
+        }
+
+
+
+        val nsdServiceManager = NsdServiceManager(application)
+        nsdServiceManager.discoverAntminerServices()
+
+       // Para obtener la lista de servicios descubiertos:
+       val antminerServices = nsdServiceManager.getDiscoveredServices()
+         Log.d("AntminerServices", antminerServices.toString())
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
