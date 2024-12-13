@@ -71,6 +71,9 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+
 }
 
 // Configuración de Kapt

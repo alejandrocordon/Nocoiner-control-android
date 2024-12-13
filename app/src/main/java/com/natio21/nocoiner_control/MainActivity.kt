@@ -2,6 +2,50 @@ package com.natio21.nocoiner_control
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.lifecycle.lifecycleScope
+import com.natio21.nocoiner_control.openapi.client.infrastructure.ApiClient
+import com.natio21.nocoiner_control.ui.home.HomeViewModel
+import com.natio21.nocoiner_control.ui.screens.HomeScreen
+import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
+import kotlinx.coroutines.launch
+
+class MainActivity : ComponentActivity() {
+
+
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            NocoinercontrolTheme {
+                // Aquí podrías cargar tu NocoinerApp o una pantalla principal
+                // Por ejemplo, HomeScreen() o NocoinerApp()
+                HomeScreen()
+            }
+        }
+
+        // Realizar una llamada a la API en un coroutine scope
+        // No bloquear el hilo principal: usamos lifecycleScope.launch
+        lifecycleScope.launch {
+            try {
+                // Llamada a la API (ejemplo: obtener la temperatura actual)
+                val temperatureStatus = service.getTemperatureStatus()
+                Log.d("MainActivity", "Temperatura actual: ${temperatureStatus.current}, Objetivo: ${temperatureStatus.target}")
+
+                // Podrías actualizar algún estado Compose con estos datos
+                // o pasarlos a un ViewModel que exponga un StateFlow o LiveData.
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error al obtener temperatura", e)
+            }
+        }
+    }
+}
+
+
+/*import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
@@ -16,6 +60,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.natio21.nocoiner_control.databinding.ActivityMainBinding
 import com.natio21.nocoiner_control.di.NsdServiceManager
+import com.natio21.nocoiner_control.openapi.client.infrastructure.ApiClient
 import com.natio21.nocoiner_control.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -29,9 +74,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nsdServiceManager: NsdServiceManager
     private val homeViewModel: HomeViewModel by viewModels()
 
+    // Crear el cliente al iniciar la Activity
+    private val apiClient by lazy {
+        ApiClient().apply {
+            // Ajusta la URL base de tu API
+            basePath = "http://192.168.1.121"
+        }
+    }
+
     @Inject
     lateinit var minerApiService: MinerApiService
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,9 +118,27 @@ class MainActivity : AppCompatActivity() {
                 minerInfo?.let {
                     Log.d("MinerInfo", it.toString())
                 }
+
+
+
             }
         }
 
+
+        // Realizar una llamada a la API en un coroutine scope
+        // No bloquear el hilo principal: usamos lifecycleScope.launch
+        lifecycleScope.launch {
+            try {
+                // Llamada a la API (ejemplo: obtener la temperatura actual)
+                val temperatureStatus = service.getTemperatureStatus()
+                Log.d("MainActivity", "Temperatura actual: ${temperatureStatus.current}, Objetivo: ${temperatureStatus.target}")
+
+                // Podrías actualizar algún estado Compose con estos datos
+                // o pasarlos a un ViewModel que exponga un StateFlow o LiveData.
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error al obtener temperatura", e)
+            }
+        }
 
 
         nsdServiceManager = NsdServiceManager(application)
@@ -95,4 +165,6 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-}
+}*/
+
+

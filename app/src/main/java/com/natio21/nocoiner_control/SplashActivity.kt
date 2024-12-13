@@ -34,7 +34,7 @@ class SplashActivity : ComponentActivity() {
                         contentAlignment = Alignment.Center
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.nocoiner),
+                            painter = painterResource(id = R.drawable.natio21),
                             contentDescription = null,
                             modifier = Modifier.wrapContentSize()
                         )
@@ -61,7 +61,7 @@ fun SplashActivityPreview() {
             contentAlignment = Alignment.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.nocoiner),
+                painter = painterResource(id = R.drawable.natio21),
                 contentDescription = null,
                 modifier = Modifier.wrapContentSize()
             )
