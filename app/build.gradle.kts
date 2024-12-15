@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp) // o la versión más reciente
+
 
 }
 

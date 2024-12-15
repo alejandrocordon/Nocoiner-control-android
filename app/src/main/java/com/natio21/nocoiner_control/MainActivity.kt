@@ -14,8 +14,16 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
+    private val apiClient by lazy {
+        ApiClient(baseUrl = "http://192.168.1.121")
+    }
 
-    
+    private val minerApi by lazy {
+        MinerApi(apiClient) // Ajustar al nombre real de la clase API encontrada
+    }
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
