@@ -279,22 +279,26 @@ open class ApiClient(val baseUrl: String, val client: String = defaultClient) {
                     it.code,
                     it.headers.toMultimap()
                 )
+
                 it.isInformational -> Informational(
                     it.message,
                     it.code,
                     it.headers.toMultimap()
                 )
+
                 it.isSuccessful -> Success(
                     responseBody(it, accept),
                     it.code,
                     it.headers.toMultimap()
                 )
+
                 it.isClientError -> ClientError(
                     it.message,
                     it.body?.string(),
                     it.code,
                     it.headers.toMultimap()
                 )
+
                 else -> ServerError(
                     it.message,
                     it.body?.string(),

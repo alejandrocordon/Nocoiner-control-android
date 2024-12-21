@@ -74,7 +74,8 @@ dependencies {
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
     implementation(libs.okhttp) // o la versión más reciente
-
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.material)
 
 }
 
