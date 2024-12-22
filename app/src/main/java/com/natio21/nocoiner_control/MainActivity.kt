@@ -5,35 +5,47 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import com.natio21.nocoiner_control.MinerInfo
 import androidx.lifecycle.lifecycleScope
 import com.natio21.nocoiner_control.ui.screens.HomeScreen
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-   
-
+    @Inject
+    lateinit var minerApiService: MinerApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            NocoinercontrolTheme {
-                // Aquí podrías cargar tu NocoinerApp o una pantalla principal
-                // Por ejemplo, HomeScreen() o NocoinerApp()
-                HomeScreen()
-            }
-        }
 
 
+        //lifecycleScope.launch {
+//
+//
+        //}
 
         // Realizar una llamada a la API en un coroutine scope
         // No bloquear el hilo principal: usamos lifecycleScope.launch
         lifecycleScope.launch {
             try {
                 // Llamada a la API (ejemplo: obtener la temperatura actual)
-                //val temperatureStatus = service.getTemperatureStatus()
-                //Log.d("MainActivity", "Temperatura actual: ${temperatureStatus.current}, Objetivo: ${temperatureStatus.target}")
+                // get info from miner api using MinerApiService
+                val minerInfo = minerApiService.getMinerInfo()
+                Log.d("MainActivity", "Miner Info: $minerInfo")
+
+                setContent {
+                    NocoinercontrolTheme {
+                        // Aquí podrías cargar tu NocoinerApp o una pantalla principal
+                        // Por ejemplo, HomeScreen() o NocoinerApp()
+
+                        HomeScreen(minerInfo = minerInfo.toString())
+                    }
+                }
+
 
                 // Podrías actualizar algún estado Compose con estos datos
                 // o pasarlos a un ViewModel que exponga un StateFlow o LiveData.

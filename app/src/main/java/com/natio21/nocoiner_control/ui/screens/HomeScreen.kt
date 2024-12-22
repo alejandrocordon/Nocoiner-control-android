@@ -97,7 +97,7 @@ fun SplashScreen(navController: NavHostController) {
 }
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(minerInfo: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -122,6 +122,9 @@ fun HomeScreen() {
         ) {
             Text("Bajar Temperatura")
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Información del Nocoiner", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text("Información del Nocoiner: $minerInfo", fontSize = 24.sp, fontWeight = FontWeight.Bold)
     }
 }
 
