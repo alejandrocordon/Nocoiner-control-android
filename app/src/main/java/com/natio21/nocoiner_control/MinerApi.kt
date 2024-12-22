@@ -10,5 +10,7 @@ class MinerApi(baseUrl: String = ApiClient.baseUrlKey, client: OkHttpClient = Ap
     suspend fun getTemperatureStatus(): TempSensor? {
         // Lógica interna para llamar a request(...)
 
+        return null
     }
+
 }

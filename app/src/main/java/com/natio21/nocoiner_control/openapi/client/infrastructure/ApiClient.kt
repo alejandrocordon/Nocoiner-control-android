@@ -22,10 +22,11 @@ import java.time.OffsetTime
 import java.util.Locale
 import java.util.regex.Pattern
 import com.squareup.moshi.adapter
+import okhttp3.Call
 
 val EMPTY_REQUEST: RequestBody = ByteArray(0).toRequestBody()
 
-open class ApiClient(val baseUrl: String, val client: String = defaultClient) {
+open class ApiClient(val baseUrl: String, val client: Call.Factory = defaultClient) {
     companion object {
         protected const val ContentType: String = "Content-Type"
         protected const val Accept: String = "Accept"
@@ -279,26 +280,22 @@ open class ApiClient(val baseUrl: String, val client: String = defaultClient) {
                     it.code,
                     it.headers.toMultimap()
                 )
-
                 it.isInformational -> Informational(
                     it.message,
                     it.code,
                     it.headers.toMultimap()
                 )
-
                 it.isSuccessful -> Success(
                     responseBody(it, accept),
                     it.code,
                     it.headers.toMultimap()
                 )
-
                 it.isClientError -> ClientError(
                     it.message,
                     it.body?.string(),
                     it.code,
                     it.headers.toMultimap()
                 )
-
                 else -> ServerError(
                     it.message,
                     it.body?.string(),

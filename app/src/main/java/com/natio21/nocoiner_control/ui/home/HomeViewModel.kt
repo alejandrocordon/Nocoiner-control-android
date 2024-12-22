@@ -1,4 +1,4 @@
-package com.natio21.nocoiner_control.ui.home
+/*package com.natio21.nocoiner_control.ui.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -50,4 +50,4 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-}
+}*/

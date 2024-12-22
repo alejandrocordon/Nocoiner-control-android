@@ -6,22 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.lifecycleScope
-import com.natio21.nocoiner_control.openapi.client.infrastructure.ApiClient
-import com.natio21.nocoiner_control.ui.home.HomeViewModel
 import com.natio21.nocoiner_control.ui.screens.HomeScreen
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    private val apiClient by lazy {
-        ApiClient(baseUrl = "http://192.168.1.121")
-    }
-
-    private val minerApi by lazy {
-        MinerApi(apiClient) // Ajustar al nombre real de la clase API encontrada
-    }
-
+   
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,13 +25,15 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+
+
         // Realizar una llamada a la API en un coroutine scope
         // No bloquear el hilo principal: usamos lifecycleScope.launch
         lifecycleScope.launch {
             try {
                 // Llamada a la API (ejemplo: obtener la temperatura actual)
-                val temperatureStatus = service.getTemperatureStatus()
-                Log.d("MainActivity", "Temperatura actual: ${temperatureStatus.current}, Objetivo: ${temperatureStatus.target}")
+                //val temperatureStatus = service.getTemperatureStatus()
+                //Log.d("MainActivity", "Temperatura actual: ${temperatureStatus.current}, Objetivo: ${temperatureStatus.target}")
 
                 // Podrías actualizar algún estado Compose con estos datos
                 // o pasarlos a un ViewModel que exponga un StateFlow o LiveData.

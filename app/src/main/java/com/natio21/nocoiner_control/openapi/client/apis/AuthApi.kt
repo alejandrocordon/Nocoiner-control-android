@@ -87,6 +87,10 @@ class AuthApi(basePath: kotlin.String = defaultBasePath, client: Call.Factory = 
         )
     }
 
+
+    //request(requestConfig: RequestConfig<I>): ApiResponse<T?>? {
+
+
     /**
      * To obtain the request config of the operation authCheck
      *
