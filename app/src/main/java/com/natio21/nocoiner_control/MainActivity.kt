@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import com.natio21.nocoiner_control.MinerInfo
 import androidx.lifecycle.lifecycleScope
+import com.natio21.nocoiner_control.openapi.client.models.TempSensor
+import com.natio21.nocoiner_control.openapi.client.models.TempSensorStatus
 import com.natio21.nocoiner_control.ui.screens.HomeScreen
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,12 +39,29 @@ class MainActivity : ComponentActivity() {
                 val minerInfo = minerApiService.getMinerInfo()
                 Log.d("MainActivity", "Miner Info: $minerInfo")
 
+
+                val status = minerApiService.getMinerStatus()
+                Log.d("MainActivity", "Miner Status: ${status.minerState} Hashrate: ${status.minerStateTime} Description ${status.description}" )
+
+
+
+
+                //val temperature = minerApiService.getTemperatureStatus()
+//
+                //// Imprimir las temperaturas
+                //Log.d("MainActivity", "Chip Temperature: ${temperature.chipTemp}°C pcb Temperature: ${temperature.pcbTemp} °C" )
+
+
+
                 setContent {
                     NocoinercontrolTheme {
                         // Aquí podrías cargar tu NocoinerApp o una pantalla principal
                         // Por ejemplo, HomeScreen() o NocoinerApp()
 
                         HomeScreen(minerInfo = minerInfo.toString())
+
+
+
                     }
                 }
 
