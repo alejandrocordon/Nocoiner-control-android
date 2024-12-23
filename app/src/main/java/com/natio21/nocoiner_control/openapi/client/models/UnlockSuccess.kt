@@ -25,6 +25,16 @@ import com.squareup.moshi.JsonClass
  * @param token 
  */
 
+@JsonClass(generateAdapter = true)
+data class UnlockRequest(
+    val pw: String
+)
+
+@JsonClass(generateAdapter = true)
+data class UnlockResponse(
+    @Json(name = "token")
+    val token: kotlin.String
+)
 
 data class UnlockSuccess (
 
