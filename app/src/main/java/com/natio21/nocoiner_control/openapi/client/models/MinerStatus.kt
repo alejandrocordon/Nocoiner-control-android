@@ -32,7 +32,7 @@ import com.squareup.moshi.JsonClass
 data class MinerStatus (
 
     @Json(name = "miner_state")
-    val minerState: MinerState,
+    val minerState: MinerState? = null,
 
     /* Time spent in the current state. For now implemented for `mining` state only. */
     @Json(name = "miner_state_time")
