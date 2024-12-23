@@ -53,6 +53,22 @@ class MainActivity : ComponentActivity() {
                 //val status = minerApiService.getMinerStatus()
                 //Log.d("MainActivity", "Miner Status: ${status.minerState} Hashrate: ${status.minerStateTime} Description ${status.description}" )
 
+                try {
+                    val apikeysApi = minerApiService.getApiKeys("asdfasdfasdfasdfasdfasdfasdfabtc")
+                    apikeysApi.forEach() {
+                        Log.d("MainActivity", "API Keys: ${it.key} ${it.description}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "Error al obtener API Keys", e)
+                }
+
+                try {
+                    val authCheck = minerApiService.getAuthCheck("asdfasdfasdfasdfasdfasdfasdfabtc")
+                    Log.d("MainActivity", "API Keys: $authCheck")
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "Error al obtener API Keys", e)
+                }
+
                 val summary = minerApiService.getSummary()
 
                 Log.d("MainActivity", "Summary: $summary")
