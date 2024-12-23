@@ -25,10 +25,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
-        //lifecycleScope.launch {
-//
-//
-        //}
+
+        //get summary from miner and wait to get the data
+        lifecycleScope.launch {
+            val summary = minerApiService.getSummary()
+            Log.d("MainActivity", "Summary: $summary")
+
+
+
+            //get http connection to http://192.168.1.121/api/v1/summary and Log.d the data
+
+        }
+
+
+
 
         // Realizar una llamada a la API en un coroutine scope
         // No bloquear el hilo principal: usamos lifecycleScope.launch
@@ -36,15 +46,33 @@ class MainActivity : ComponentActivity() {
             try {
                 // Llamada a la API (ejemplo: obtener la temperatura actual)
                 // get info from miner api using MinerApiService
-                val minerInfo = minerApiService.getMinerInfo()
-                Log.d("MainActivity", "Miner Info: $minerInfo")
+                //val minerInfo = minerApiService.getMinerInfo()
+                //Log.d("MainActivity", "Miner Info: $minerInfo")
 
 
-                val status = minerApiService.getMinerStatus()
-                Log.d("MainActivity", "Miner Status: ${status.minerState} Hashrate: ${status.minerStateTime} Description ${status.description}" )
+                //val status = minerApiService.getMinerStatus()
+                //Log.d("MainActivity", "Miner Status: ${status.minerState} Hashrate: ${status.minerStateTime} Description ${status.description}" )
+
+                val summary = minerApiService.getSummary()
+
+                Log.d("MainActivity", "Summary: $summary")
+
+                summary.miner.chains.let {
+                    Log.d("MainActivity", "Chains: $it" )
+                }
 
 
+                summary.miner.let {
+                    Log.d("MainActivity", "Chip Temperature: ${it.chipTemp}°C pcb Temperature: ${it.pcbTemp} °C" )
+                }
+                summary.miner.pcbTemp.let {
+                    Log.d("MainActivity", "PCB Temperature: $it °C" )
+                }
 
+
+                summary.miner.let {
+                    Log.d("MainActivity", "Chip Temperature: ${it.chipTemp}°C pcb Temperature: ${it.pcbTemp} °C" )
+                }
 
                 //val temperature = minerApiService.getTemperatureStatus()
 //
@@ -58,7 +86,7 @@ class MainActivity : ComponentActivity() {
                         // Aquí podrías cargar tu NocoinerApp o una pantalla principal
                         // Por ejemplo, HomeScreen() o NocoinerApp()
 
-                        HomeScreen(minerInfo = minerInfo.toString())
+                        HomeScreen(minerInfo = summary.toString())
 
 
 

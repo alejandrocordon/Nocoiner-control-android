@@ -57,7 +57,7 @@ data class AntmMinerStats (
 
     /* Deprecated. Same as hr_average but measure is MG/s. */
     @Json(name = "average_hashrate")
-    @Deprecated(message = "This property is deprecated.")
+    //@Deprecated(message = "This property is deprecated.")
     val averageHashrate: kotlin.Float,
 
     @Json(name = "best_share")

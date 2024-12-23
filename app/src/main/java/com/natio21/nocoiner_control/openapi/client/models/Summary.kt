@@ -30,7 +30,7 @@ import com.squareup.moshi.JsonClass
 data class Summary (
 
     @Json(name = "miner")
-    val miner: AntmMinerStats? = null
+    val miner: AntmMinerStats
 
 ) {
 

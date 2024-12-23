@@ -1,5 +1,6 @@
 package com.natio21.nocoiner_control.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -21,8 +22,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.natio21.nocoiner_control.MinerApiService
 import com.natio21.nocoiner_control.R
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @Composable
 fun HomeScreen(
@@ -44,7 +47,10 @@ fun HomeScreen(
         if (currentTemperature == null) {
             Text(text = "Cargando temperatura...")
         } else {
-            Text(text = "Temperatura Actual: $currentTemperature °C", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Temperatura Actual: $currentTemperature °C",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -97,7 +103,9 @@ fun SplashScreen(navController: NavHostController) {
 }
 
 @Composable
-fun HomeScreen(minerInfo: String) {
+fun HomeScreen(
+    minerInfo: String
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -105,10 +113,16 @@ fun HomeScreen(minerInfo: String) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Control de Temperatura", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text("Control de Temperatura", fontSize = 14.sp, fontWeight = FontWeight.Normal)
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { /* Lógica para subir temperatura */ },
+            onClick = {
+
+                Log.d("HomeScreen", "Subir temperatura")
+
+
+
+            },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -116,15 +130,20 @@ fun HomeScreen(minerInfo: String) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { /* Lógica para bajar temperatura */ },
+            onClick = {
+
+                Log.d("HomeScreen", "Bajar temperatura")
+
+            },
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Bajar Temperatura")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Información del Nocoiner", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        Text("Información del Nocoiner: $minerInfo", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text("Información del Nocoiner", fontSize = 9.sp, fontWeight = FontWeight.Normal)
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(minerInfo, fontSize = 9.sp, fontWeight = FontWeight.Normal)
     }
 }
 
