@@ -1,6 +1,7 @@
 package com.natio21.nocoiner_control
 
 import com.natio21.nocoiner_control.openapi.client.models.ApiKeysResponse
+import com.natio21.nocoiner_control.openapi.client.models.AntmChain
 import com.natio21.nocoiner_control.openapi.client.models.MinerStatus
 import com.natio21.nocoiner_control.openapi.client.models.Summary
 import com.natio21.nocoiner_control.openapi.client.models.TempSensor
@@ -39,6 +40,9 @@ interface MinerApiService {
     @GET("api/v1/summary")
     suspend fun getSummary(
         @Header("x-api-key") apiKey: String): Summary
+
+    @GET("api/v1/chains")
+    suspend fun getChains(): List<AntmChain>
 
 
     // Define the API post endpoints

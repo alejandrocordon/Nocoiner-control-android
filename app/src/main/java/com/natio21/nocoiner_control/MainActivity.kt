@@ -82,23 +82,32 @@ class MainActivity : ComponentActivity() {
                 val summary = minerApiService.getSummary("asdfasdfasdfasdfasdfasdfasdfabtc")
 
                 Log.d("MainActivity", "Summary: $summary")
-
-                summary.miner.chains.let {
-                    Log.d("MainActivity", "Chains: $it" )
+                summary.miner.minerStatus?.let {
+                    Log.d("MainActivity", "Miner Status: ${it.minerState} Hashrate: ${it.minerStateTime} Description ${it.description}" )
+                }
+                summary.miner.minerType.let {
+                    Log.d("MainActivity", "Miner Type: $it" )
+                }
+                summary.miner.chipTemp.let {
+                    Log.d("MainActivity", "Chip Temp: $it" )
+                }
+                summary.miner.chains.forEach { chain ->
+                    Log.d("MainActivity", "Chain: ${chain.id} Frequency: ${chain.frequency} Voltage: ${chain.voltage} Chip Temp: ${chain.chipTemp}" )
                 }
 
 
-                summary.miner.let {
-                    Log.d("MainActivity", "Chip Temperature: ${it.chipTemp}°C pcb Temperature: ${it.pcbTemp} °C" )
-                }
-                summary.miner.pcbTemp.let {
-                    Log.d("MainActivity", "PCB Temperature: $it °C" )
+
+
+                val chains = minerApiService.getChains()
+                Log.d("MainActivity", "Chains: $chains")
+                chains.forEach {
+                    Log.d("MainActivity", "id : ${it.id}")
+                    Log.d("MainActivity", "frequency : ${it.frequency}")
+                    Log.d("MainActivity", "voltage : ${it.voltage}")
+                    Log.d("MainActivity", "chipTemp : ${it.chipTemp}")
                 }
 
 
-                summary.miner.let {
-                    Log.d("MainActivity", "Chip Temperature: ${it.chipTemp}°C pcb Temperature: ${it.pcbTemp} °C" )
-                }
 
                 //val temperature = minerApiService.getTemperatureStatus()
 //
