@@ -4,6 +4,9 @@ import com.natio21.nocoiner_control.openapi.client.models.ApiKeysResponse
 import com.natio21.nocoiner_control.openapi.client.models.MinerStatus
 import com.natio21.nocoiner_control.openapi.client.models.Summary
 import com.natio21.nocoiner_control.openapi.client.models.TempSensor
+import com.natio21.nocoiner_control.openapi.client.models.UnlockRequest
+import com.natio21.nocoiner_control.openapi.client.models.UnlockResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -34,12 +37,18 @@ interface MinerApiService {
     suspend fun getTemperatureStatus(): TempSensor
 
     @GET("api/v1/summary")
-    suspend fun getSummary(): Summary
+    suspend fun getSummary(
+        @Header("x-api-key") apiKey: String): Summary
 
 
     // Define the API post endpoints
     @POST("api/v1/reboot")
     suspend fun rebootMiner()
+
+    @POST("api/v1/unlock")
+    suspend fun unlockMiner(
+        @Body request: UnlockRequest
+    ): UnlockResponse
 
 
 }   
