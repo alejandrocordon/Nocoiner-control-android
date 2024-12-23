@@ -31,6 +31,7 @@ data class Summary (
 
     @Json(name = "miner")
     val miner: AntmMinerStats
+    //val miner: MinerSummary
 
 ) {
 
