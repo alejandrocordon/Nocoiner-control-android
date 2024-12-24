@@ -8,6 +8,10 @@ import com.squareup.moshi.JsonClass
  * @param settings
  */
 
+@JsonClass(generateAdapter = true)
+data class SettingsResponse(
+    val miner: MinerSettings
+)
 
 @JsonClass(generateAdapter = true)
 data class SettingsRequest(
@@ -32,8 +36,3 @@ data class ModeSettings(
     val param: Int
 )
 
-@JsonClass(generateAdapter = true)
-data class SettingsResponse(
-    val success: Boolean,
-    val message: String
-)

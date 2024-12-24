@@ -30,46 +30,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
-
-        //get summary from miner and wait to get the data
-        lifecycleScope.launch {
-            val summary = minerApiService.getSummary("asdfasdfasdfasdfasdfasdfasdfabtc")
-            Log.d("MainActivity", "Summary: $summary")
-
-
-
-            //get http connection to http://192.168.1.121/api/v1/summary and Log.d the data
-
-        }
-
-
-
-
         // Realizar una llamada a la API en un coroutine scope
         // No bloquear el hilo principal: usamos lifecycleScope.launch
         lifecycleScope.launch {
             try {
 
-                lifecycleScope.launch {
-                    try {
-                        val settingsRequest = SettingsRequest(
-                            miner = MinerSettings(
-                                cooling = CoolingSettings(
-                                    mode = ModeSettings(name = "auto", param = 65),
-                                    fan_min_count = 4,
-                                    fan_min_duty = 10
-                                )
-                            )
-                        )
-                        val settingsResponse = minerApiService.updateSettings(
-                            apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
-                            request = settingsRequest
-                        )
-                        Log.d("MainActivity", "Settings Response: ${settingsResponse.message}")
-                    } catch (e: Exception) {
-                        Log.e("MainActivity", "Error al actualizar la configuración", e)
-                    }
-                }
+
+
 
                 try {
                     val apikeysApi = minerApiService.getApiKeys("asdfasdfasdfasdfasdfasdfasdfabtc")
@@ -135,13 +102,7 @@ class MainActivity : ComponentActivity() {
 
                 setContent {
                     NocoinercontrolTheme {
-                        // Aquí podrías cargar tu NocoinerApp o una pantalla principal
-                        // Por ejemplo, HomeScreen() o NocoinerApp()
-
-                        HomeScreen(minerInfo = summary.toString())
-
-
-
+                        HomeScreen(lifecycleScope = lifecycleScope, minerApiService = minerApiService)
                     }
                 }
 

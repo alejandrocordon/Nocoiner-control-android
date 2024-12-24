@@ -46,6 +46,11 @@ interface MinerApiService {
     @GET("api/v1/chains")
     suspend fun getChains(): List<AntmChain>
 
+    @GET("api/v1/settings")
+    suspend fun getSettings(
+        @Header("x-api-key") apiKey: String
+    ): SettingsResponse
+
 
     // Define the API post endpoints
     @POST("api/v1/reboot")
