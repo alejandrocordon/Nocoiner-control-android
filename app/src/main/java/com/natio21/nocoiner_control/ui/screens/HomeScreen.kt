@@ -18,12 +18,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.natio21.nocoiner_control.MinerApiService
 import com.natio21.nocoiner_control.R
+import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
+import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
+import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
+import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
+import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
+import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioOrange80
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -104,8 +113,28 @@ fun SplashScreen(navController: NavHostController) {
 
 @Composable
 fun HomeScreen(
-    minerInfo: String
+    lifecycleScope: LifecycleCoroutineScope,
+    minerApiService: MinerApiService
 ) {
+
+    var temperature by remember { mutableStateOf(0) }
+    var settingsResponse by remember { mutableStateOf<SettingsResponse?>(null) }
+
+
+    // Make the API call to get settings
+    LaunchedEffect(Unit) {
+        try {
+            settingsResponse = minerApiService.getSettings("asdfasdfasdfasdfasdfasdfasdfabtc")
+            val cooling = settingsResponse!!.miner.cooling
+            Log.d("HomeScreen", "Cooling Mode: ${cooling.mode.name}, Param: ${cooling.mode.param}")
+            Log.d("HomeScreen", "Fan Min Count: ${cooling.fan_min_count}, Fan Min Duty: ${cooling.fan_min_duty}")
+            temperature = cooling.mode.param
+        } catch (e: Exception) {
+            Log.e("HomeScreen", "Error fetching settings", e)
+        }
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -113,37 +142,121 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Add the image
+        Image(
+            painter = painterResource(id = R.drawable.dosc),
+            contentDescription = "2c Image",
+            modifier = Modifier.size(200.dp)
+        )
         Text("Control de Temperatura", fontSize = 14.sp, fontWeight = FontWeight.Normal)
         Spacer(modifier = Modifier.height(16.dp))
+        Text("Temperatura Actual: $temperature°C", fontSize = 14.sp, fontWeight = FontWeight.Normal)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
 
-                Log.d("HomeScreen", "Subir temperatura")
+                Log.d("HomeScreen", "Temperatura al maximo 80ºC")
+                lifecycleScope.launch {
+                    try {
+                        val settingsRequest = SettingsRequest(
+                            miner = MinerSettings(
+                                cooling = CoolingSettings(
+                                    mode = ModeSettings(name = "auto", param = 80),
+                                    fan_min_count = 4,
+                                    fan_min_duty = 10
+                                )
+                            )
+                        )
+                        settingsResponse = minerApiService.updateSettings(
+                            apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
+                            request = settingsRequest
+                        )
+                        temperature = 80
+                        Log.d("MainActivity", "Settings Response: $temperature")
 
-
-
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Error al actualizar la configuración", e)
+                    }
+                }
             },
             shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Subir Temperatura")
+            Text("Temperatura Máxima")
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
 
-                Log.d("HomeScreen", "Bajar temperatura")
+                Log.d("HomeScreen", "Temperatura al maximo 70ºC")
+                lifecycleScope.launch {
+                    try {
+                        val settingsRequest = SettingsRequest(
+                            miner = MinerSettings(
+                                cooling = CoolingSettings(
+                                    mode = ModeSettings(name = "auto", param = 70),
+                                    fan_min_count = 4,
+                                    fan_min_duty = 10
+                                )
+                            )
+                        )
+                        val settingsResponse = minerApiService.updateSettings(
+                            apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
+                            request = settingsRequest
+                        )
+                        temperature = 70
+                        Log.d("MainActivity", "Settings Response: $temperature")
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Error al actualizar la configuración", e)
+                    }
+                }
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Temperatura Media")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+
+                Log.d("HomeScreen", "Temperatura al minimo 65ºC")
+                lifecycleScope.launch {
+                    try {
+                        val settingsRequest = SettingsRequest(
+                            miner = MinerSettings(
+                                cooling = CoolingSettings(
+                                    mode = ModeSettings(name = "auto", param = 65),
+                                    fan_min_count = 4,
+                                    fan_min_duty = 10
+                                )
+                            )
+                        )
+                        val settingsResponse = minerApiService.updateSettings(
+                            apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
+                            request = settingsRequest
+                        )
+                        temperature = 65
+                        Log.d("MainActivity", "Settings Response: $temperature")
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Error al actualizar la configuración", e)
+                    }
+                }
 
             },
             shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Bajar Temperatura")
+            Text("Temperatura Mínima")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Información del Nocoiner", fontSize = 9.sp, fontWeight = FontWeight.Normal)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(minerInfo, fontSize = 9.sp, fontWeight = FontWeight.Normal)
     }
 }
 
