@@ -7,6 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import com.natio21.nocoiner_control.MinerInfo
 import androidx.lifecycle.lifecycleScope
+import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
+import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
+import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
+import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.TempSensor
 import com.natio21.nocoiner_control.openapi.client.models.TempSensorStatus
 import com.natio21.nocoiner_control.openapi.client.models.UnlockRequest
@@ -45,14 +49,27 @@ class MainActivity : ComponentActivity() {
         // No bloquear el hilo principal: usamos lifecycleScope.launch
         lifecycleScope.launch {
             try {
-                // Llamada a la API (ejemplo: obtener la temperatura actual)
-                // get info from miner api using MinerApiService
-                //val minerInfo = minerApiService.getMinerInfo()
-                //Log.d("MainActivity", "Miner Info: $minerInfo")
 
-
-                //val status = minerApiService.getMinerStatus()
-                //Log.d("MainActivity", "Miner Status: ${status.minerState} Hashrate: ${status.minerStateTime} Description ${status.description}" )
+                lifecycleScope.launch {
+                    try {
+                        val settingsRequest = SettingsRequest(
+                            miner = MinerSettings(
+                                cooling = CoolingSettings(
+                                    mode = ModeSettings(name = "auto", param = 65),
+                                    fan_min_count = 4,
+                                    fan_min_duty = 10
+                                )
+                            )
+                        )
+                        val settingsResponse = minerApiService.updateSettings(
+                            apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
+                            request = settingsRequest
+                        )
+                        Log.d("MainActivity", "Settings Response: ${settingsResponse.message}")
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Error al actualizar la configuración", e)
+                    }
+                }
 
                 try {
                     val apikeysApi = minerApiService.getApiKeys("asdfasdfasdfasdfasdfasdfasdfabtc")
