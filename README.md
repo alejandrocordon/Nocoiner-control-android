@@ -1,7 +1,9 @@
 # Nocoiner Control App
 
 
-![Nocoiner control](/images/nocoinerphoto.png)
+
+<img src="/images/nocoinerphoto.png" alt="drawing" width="350" align="center"/>
+
 
 
 # Nocoiner Control App
@@ -43,6 +45,8 @@ The app offers an intuitive interface to control the heating output, configure m
 3. **Launch and Discover Devices:** Open the app to detect Nocoiner devices automatically.
 4. **Configure Pools:** Navigate to the settings menu to set up mining pool details.
 5. **Start Heating:** Use the control interface to adjust the heat or schedule operations.
+
+<img src="Screenshot_20241224_144219.png" alt="drawing" width="200" align="center"/>
 
 ## Contribution
 This project is developed and maintained by **Alejandro Cordón** in collaboration with **Natio21**. Contributions and feedback are welcome to enhance its functionality further.
