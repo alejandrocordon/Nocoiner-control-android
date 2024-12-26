@@ -85,51 +85,12 @@ data class Miner(
     @Json(name = "best_share") val bestShare: Long
 )
 
-//@JsonClass(generateAdapter = true)
-//data class MinerStatus(
-//    @Json(name = "miner_state") val minerState: String,
-//    @Json(name = "miner_state_time") val minerStateTime: Long
-//)
-
 @JsonClass(generateAdapter = true)
 data class Temperature(
     val min: Int,
     val max: Int
 )
 
-//@JsonClass(generateAdapter = true)
-//data class Pool(
-//    val id: Int,
-//    val url: String,
-//    @Json(name = "pool_type") val poolType: String,
-//    val user: String,
-//    val status: String,
-//    @Json(name = "asic_boost") val asicBoost: Boolean,
-//    val diff: String,
-//    val accepted: Int,
-//    val rejected: Int,
-//    val stale: Int,
-//    @Json(name = "ls_diff") val lsDiff: Double,
-//    @Json(name = "ls_time") val lsTime: String,
-//    val diffa: Double,
-//    val ping: Int
-//)
-
-//@JsonClass(generateAdapter = true)
-//data class Cooling(
-//    @Json(name = "fan_num") val fanNum: Int,
-//    val fans: List<Fan>,
-//    val settings: Settings,
-//    @Json(name = "fan_duty") val fanDuty: Int
-//)
-//
-//@JsonClass(generateAdapter = true)
-//data class Fan(
-//    val id: Int,
-//    val rpm: Int,
-//    val status: String,
-//    @Json(name = "max_rpm") val maxRpm: Int
-//)
 
 @JsonClass(generateAdapter = true)
 data class Settings(
@@ -168,8 +129,5 @@ data class ChipStatuses(
 @JsonClass(generateAdapter = true)
 data class Status(
     val state: String
-) {
-
-
-}
+)
 

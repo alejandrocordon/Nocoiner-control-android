@@ -1,0 +1,24 @@
+<resources>
+   <string name="app_name">Nocoiner-control</string>
+   <string name="title_activity_splash">SplashActivity</string>
+   <string name="title_activity_main">MainActivity</string>
+   <string name="navigation_drawer_open">नेविगेशन ड्रॉअर खोलें</string>
+   <string name="navigation_drawer_close">नेविगेशन ड्रॉअर बंद करें</string>
+   <string name="nav_header_title">Nocoiner नियंत्रण</string>
+   <string name="nav_header_subtitle">Nocoiner नियंत्रण</string>
+   <string name="nav_header_desc">नेविगेशन हेडर</string>
+   <string name="action_settings">सेटिंग्स</string>
+
+   <string name="menu_home">Nocoiner सूची</string>
+   <string name="menu_gallery">परीक्षण</string>
+   <string name="menu_slideshow">परीक्षण2</string>
+   <string name="welcome_message">Nocoiner ऐप में आपका स्वागत है</string>
+   <string name="loading_temperature">तापमान लोड हो रहा है...</string>
+   <string name="current_temperature">वर्तमान तापमान: %1$d °C</string>
+   <string name="refresh_data">डेटा रिफ्रेश करें</string>
+   <string name="control_temperature">तापमान नियंत्रण</string>
+   <string name="max_temperature">अधिकतम तापमान</string>
+   <string name="medium_temperature">औसत तापमान</string>
+   <string name="min_temperature">न्यूनतम तापमान</string>
+   <string name="current_temperature_label">वर्तमान तापमान: %1$d°C</string>
+</resources>

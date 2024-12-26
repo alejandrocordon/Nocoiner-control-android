@@ -33,9 +33,6 @@ interface MinerApiService {
     @GET("api/v1/status")
     suspend fun getMinerStatus(): MinerStatus
 
-    //@GET ("api/v1/settings")
-    //suspend fun getMinerSettings(): MinerSettings
-
     @GET("api/v1/temp")
     suspend fun getTemperatureStatus(): TempSensor
 

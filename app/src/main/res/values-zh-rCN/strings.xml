@@ -1,0 +1,24 @@
+<resources>
+   <string name="app_name">Nocoiner-control</string>
+   <string name="title_activity_splash">SplashActivity</string>
+   <string name="title_activity_main">MainActivity</string>
+   <string name="navigation_drawer_open">打开导航抽屉</string>
+   <string name="navigation_drawer_close">关闭导航抽屉</string>
+   <string name="nav_header_title">Nocoiner控制</string>
+   <string name="nav_header_subtitle">Nocoiner控制</string>
+   <string name="nav_header_desc">导航标题</string>
+   <string name="action_settings">设置</string>
+
+   <string name="menu_home">Nocoiner列表</string>
+   <string name="menu_gallery">测试</string>
+   <string name="menu_slideshow">测试2</string>
+   <string name="welcome_message">欢迎使用Nocoiner应用</string>
+   <string name="loading_temperature">正在加载温度...</string>
+   <string name="current_temperature">当前温度: %1$d °C</string>
+   <string name="refresh_data">刷新数据</string>
+   <string name="control_temperature">温度控制</string>
+   <string name="max_temperature">最高温度</string>
+   <string name="medium_temperature">平均温度</string>
+   <string name="min_temperature">最低温度</string>
+   <string name="current_temperature_label">当前温度: %1$d°C</string>
+</resources>
