@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Nocoiner-control</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="navigation_drawer_open">Abrir menú de navegación</string>
+    <string name="navigation_drawer_close">Cerrar menú de navegación</string>
+    <string name="nav_header_title">Nocoiner control</string>
+    <string name="nav_header_subtitle">Nocoiner control</string>
+    <string name="nav_header_desc">Encabezado de navegación</string>
+    <string name="action_settings">Configuración</string>
+
+    <string name="menu_home">Lista Nocoiner</string>
+    <string name="menu_gallery">Prueba</string>
+    <string name="menu_slideshow">Prueba2</string>
+    <string name="welcome_message">Bienvenido a la aplicación Nocoiner</string>
+    <string name="loading_temperature">Cargando temperatura...</string>
+    <string name="current_temperature">Temperatura actual: %1$d °C</string>
+    <string name="refresh_data">Actualizar datos</string>
+    <string name="control_temperature">Control de temperatura</string>
+    <string name="max_temperature">Temperatura máxima</string>
+    <string name="medium_temperature">Temperatura promedio</string>
+    <string name="min_temperature">Temperatura mínima</string>
+    <string name="current_temperature_label">Temperatura actual: %1$d°C</string>
+</resources>

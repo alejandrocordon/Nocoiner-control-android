@@ -6,10 +6,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.runtime.Composable
@@ -49,15 +50,15 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Bienvenido a la app Nocoiner", style = MaterialTheme.typography.titleLarge)
+        Text(text = stringResource(id = R.string.welcome_message), style = MaterialTheme.typography.titleLarge)
 
         Spacer(modifier = Modifier.height(24.dp))
 
         if (currentTemperature == null) {
-            Text(text = "Cargando temperatura...")
+            Text(text = stringResource(id = R.string.loading_temperature))
         } else {
             Text(
-                text = "Temperatura Actual: $currentTemperature °C",
+                text = stringResource(id = R.string.current_temperature, currentTemperature.toInt()),
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -65,48 +66,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(onClick = onRefreshClick) {
-            Text("Refrescar Datos")
-        }
-    }
-}
-
-@Composable
-fun NocoinerApp() {
-    val navController = rememberNavController()
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navController) }
-    ) {
-        NavigationHost(navController)
-    }
-}
-
-@Composable
-fun NavigationHost(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "splash") {
-        composable("splash") { SplashScreen(navController) }
-        composable("home") { HomeScreen() }
-        composable("settings") { SettingsScreen() }
-    }
-}
-
-@Composable
-fun SplashScreen(navController: NavHostController) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.natio21),
-            contentDescription = "Nocoiner Logo",
-            modifier = Modifier.size(200.dp)
-        )
-    }
-    // Simulate splash delay
-    val coroutineScope = rememberCoroutineScope()
-    coroutineScope.launch {
-        kotlinx.coroutines.delay(2000)
-        navController.navigate("home") {
-            popUpTo("splash") { inclusive = true }
+            Text(stringResource(id = R.string.refresh_data))
         }
     }
 }
@@ -120,7 +80,6 @@ fun HomeScreen(
     var temperature by remember { mutableStateOf(0) }
     var settingsResponse by remember { mutableStateOf<SettingsResponse?>(null) }
 
-
     // Make the API call to get settings
     LaunchedEffect(Unit) {
         try {
@@ -133,7 +92,6 @@ fun HomeScreen(
             Log.e("HomeScreen", "Error fetching settings", e)
         }
     }
-
 
     Column(
         modifier = Modifier
@@ -150,15 +108,14 @@ fun HomeScreen(
             contentDescription = "2c Image",
             modifier = Modifier.size(200.dp)
         )
-        Text("Control de Temperatura", fontSize = 14.sp, fontWeight = FontWeight.Normal)
+        Text(stringResource(id = R.string.control_temperature), fontSize = 14.sp, fontWeight = FontWeight.Normal)
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Temperatura Actual: $temperature°C", fontSize = 14.sp, fontWeight = FontWeight.Normal)
+        Text(stringResource(id = R.string.current_temperature_label, temperature), fontSize = 14.sp, fontWeight = FontWeight.Normal)
         Spacer(modifier = Modifier.height(16.dp))
 
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-
                 Log.d("HomeScreen", "Temperatura al maximo 80ºC")
                 lifecycleScope.launch {
                     try {
@@ -177,7 +134,6 @@ fun HomeScreen(
                         )
                         temperature = 80
                         Log.d("MainActivity", "Settings Response: $temperature")
-
                     } catch (e: Exception) {
                         Log.e("MainActivity", "Error al actualizar la configuración", e)
                     }
@@ -187,12 +143,11 @@ fun HomeScreen(
             colors = ButtonDefaults.buttonColors(NatioOrange40),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Temperatura Máxima")
+            Text(stringResource(id = R.string.max_temperature))
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-
                 Log.d("HomeScreen", "Temperatura al maximo 70ºC")
                 lifecycleScope.launch {
                     try {
@@ -220,12 +175,11 @@ fun HomeScreen(
             colors = ButtonDefaults.buttonColors(NatioOrange40),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Temperatura Media")
+            Text(stringResource(id = R.string.medium_temperature))
         }
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-
                 Log.d("HomeScreen", "Temperatura al minimo 65ºC")
                 lifecycleScope.launch {
                     try {
@@ -248,55 +202,13 @@ fun HomeScreen(
                         Log.e("MainActivity", "Error al actualizar la configuración", e)
                     }
                 }
-
             },
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(NatioOrange40),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Temperatura Mínima")
+            Text(stringResource(id = R.string.min_temperature))
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
-
-@Composable
-fun SettingsScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Pantalla de Configuración", fontSize = 20.sp)
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    BottomNavigation(backgroundColor = Color.Gray) {
-        BottomNavigationItem(
-            selected = false,
-            onClick = { navController.navigate("home") },
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.natio21),
-                    contentDescription = "Home"
-                )
-            },
-            label = { Text("Home") },
-            alwaysShowLabel = true
-        )
-        BottomNavigationItem(
-            selected = false,
-            onClick = { navController.navigate("settings") },
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.natio21),
-                    contentDescription = "Settings"
-                )
-            },
-            label = { Text("Settings") },
-            alwaysShowLabel = true
-        )
-    }
-}
-

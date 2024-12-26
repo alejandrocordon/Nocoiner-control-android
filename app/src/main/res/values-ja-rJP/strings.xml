@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Nocoiner-control</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="navigation_drawer_open">ナビゲーションドロワーを開く</string>
+    <string name="navigation_drawer_close">ナビゲーションドロワーを閉じる</string>
+    <string name="nav_header_title">Nocoinerコントロール</string>
+    <string name="nav_header_subtitle">Nocoinerコントロール</string>
+    <string name="nav_header_desc">ナビゲーションヘッダー</string>
+    <string name="action_settings">設定</string>
+
+    <string name="menu_home">Nocoinerリスト</string>
+    <string name="menu_gallery">テスト</string>
+    <string name="menu_slideshow">テスト2</string>
+    <string name="welcome_message">Nocoinerアプリへようこそ</string>
+    <string name="loading_temperature">温度を読み込み中...</string>
+    <string name="current_temperature">現在の温度：%1$d °C</string>
+    <string name="refresh_data">データを更新</string>
+    <string name="control_temperature">温度管理</string>
+    <string name="max_temperature">最高温度</string>
+    <string name="medium_temperature">平均温度</string>
+    <string name="min_temperature">最低温度</string>
+    <string name="current_temperature_label">現在の温度：%1$d°C</string>
+</resources>
