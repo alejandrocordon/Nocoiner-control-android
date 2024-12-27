@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.natio21.nocoiner_control.MainViewModel
 
 @Composable
 fun AppNavHost(
@@ -24,6 +25,7 @@ fun AppNavHost(
                         popUpTo(Routes.Splash.route) { inclusive = true }
                     }
                 },
+                context = navController.context,
                 viewModel = viewModel
             )
         }
@@ -32,6 +34,7 @@ fun AppNavHost(
             // WizardScreen puede tener su propia navegación interna,
             // o múltiples pantallas en un Page-based approach. Ejemplo:
             WizardScreen(
+                context = navController.context,
                 onWizardComplete = {
                     navController.navigate(Routes.Main.route) {
                         popUpTo(Routes.Wizard.route) { inclusive = true }

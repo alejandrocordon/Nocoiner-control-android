@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.natio21.nocoiner_control.MainViewModel
 
 @Composable
 fun MainScreen(
@@ -40,6 +41,7 @@ fun MainScreen(
                 BasicHeaterScreen(viewModel)
             }
             composable(MainRoutes.Advanced.route) {
+                AdvancedScreen(viewModel)
                 AdvancedScreen(viewModel)
             }
             composable(MainRoutes.Settings.route) {

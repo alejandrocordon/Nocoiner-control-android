@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
 import com.natio21.nocoiner_control.openapi.client.models.UnlockRequest
+import com.natio21.nocoiner_control.ui.screens.AppNavHost
 import com.natio21.nocoiner_control.ui.screens.HomeScreen
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,11 +83,20 @@ class MainActivity : ComponentActivity() {
 
                 setContent {
                     NocoinercontrolTheme {
-                        HomeScreen(
-                            lifecycleScope = lifecycleScope,
-                            minerApiService = minerApiService
-                        )
+                        //HomeScreen(
+                        //    lifecycleScope = lifecycleScope,
+                        //    minerApiService = minerApiService
+                        //)
+
+
+                        val navController = rememberNavController()
+                        val viewModel: MainViewModel = viewModel()
+                        AppNavHost(navController = navController, viewModel = viewModel)
+
                     }
+
+
+
                 }
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error al obtener temperatura", e)

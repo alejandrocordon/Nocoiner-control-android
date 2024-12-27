@@ -1,10 +1,16 @@
 package com.natio21.nocoiner_control
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
-class MainViewModel() : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+
 
     // STATES
     val wizardUiState: WizardUiState = WizardUiState()
@@ -12,35 +18,64 @@ class MainViewModel() : ViewModel() {
     val advancedUiState: AdvancedUiState = AdvancedUiState()
     val settingsUiState: SettingsUiState = SettingsUiState()
 
-    // Para Splash
     fun hasSavedData(): Boolean {
-        // Leer de SharedPreferences
-        //TODO: add this logic
-         return false
+        val context = getApplication<Application>().applicationContext
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("nocoiner_prefs", Context.MODE_PRIVATE)
+        val ip = sharedPreferences.getString("ip_address", null)
+        val apiKey = sharedPreferences.getString("api_key", null)
+        return !ip.isNullOrEmpty() && !apiKey.isNullOrEmpty()
+    }
+
+    fun getIpAndApiKey(): Pair<String, String> {
+        val context = getApplication<Application>().applicationContext
+        val sharedPreferences: SharedPreferences =
+            context.getSharedPreferences("nocoiner_prefs", Context.MODE_PRIVATE)
+        val ip = sharedPreferences.getString("ip_address", null)
+        val apiKey = sharedPreferences.getString("api_key", null)
+        return Pair(ip!!, apiKey!!)
     }
 
     // Wizard
-    fun updateIp(ip: String) { wizardUiState.ip = ip }
-    fun updateApiKey(key: String) { wizardUiState.apiKey = key }
+    fun updateIp(ip: String) {
+        wizardUiState.ip = ip
+    }
+
+    fun updateApiKey(key: String) {
+        wizardUiState.apiKey = key
+    }
 
     fun validateAndSave(callback: (Boolean) -> Unit) {
         viewModelScope.launch {
-            // Validar IP y API Key
-            val isValid = /* tu lógica de validación */
-                if (isValid) {
-                    // Guardar en SharedPreference
-                    callback(true)
-                } else {
-                    wizardUiState.errorMsg = "Cannot validate IP/API Key"
-                    callback(false)
-                }
+            val context = getApplication<Application>().applicationContext
+            val sharedPreferences: SharedPreferences =
+                context.getSharedPreferences("nocoiner_prefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putString("ip_address", wizardUiState.ip)
+            editor.putString("api_key", wizardUiState.apiKey)
+            editor.apply()
+
+
+            val isValid = hasSavedData()
+            if (isValid) {
+                // Guardar en SharedPreference
+                callback(true)
+            } else {
+                wizardUiState.errorMsg = "Cannot validate IP/API Key"
+                callback(false)
+            }
         }
     }
 
     // Basic
-    fun changeTemperature(newTemp: Int) { /* ... */ }
-    fun updateTimer(minutes: Int) { /* ... */ }
-    fun startTimer(onFinished: () -> Unit) { /* ... */ }
+    fun changeTemperature(newTemp: Int) { /* ... */
+    }
+
+    fun updateTimer(minutes: Int) { /* ... */
+    }
+
+    fun startTimer(onFinished: () -> Unit) { /* ... */
+    }
 
     // Para ocultar diálogos
     fun clearError() {
@@ -48,22 +83,44 @@ class MainViewModel() : ViewModel() {
     }
 
     // Advanced
-    fun editPool(pool: Pool) { /* ... */ }
-    fun deletePool(pool: Pool) { /* ... */ }
-    fun createNewPool() { /* ... */ }
-    fun openMinerWeb(ip: String) { /* ... intent para navegador externo */ }
+    fun editPool(pool: Pool) { /* ... */
+    }
+
+    fun deletePool(pool: Pool) { /* ... */
+    }
+
+    fun createNewPool() { /* ... */
+    }
+
+    fun openMinerWeb(ip: String) {
+        val context = getApplication<Application>().applicationContext
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(ip)).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+    }
 
     // Settings
-    fun onSettingsIpChange(value: String) { settingsUiState.ip = value }
-    fun onSettingsApiKeyChange(value: String) { settingsUiState.apiKey = value }
-    fun onDarkThemeToggled(isDark: Boolean) { settingsUiState.isDarkTheme = isDark }
-    fun saveSettings() { /* ... SharedPreferences ... */ }
+    fun onSettingsIpChange(value: String) {
+        settingsUiState.ip = value
+    }
+
+    fun onSettingsApiKeyChange(value: String) {
+        settingsUiState.apiKey = value
+    }
+
+    fun onDarkThemeToggled(isDark: Boolean) {
+        settingsUiState.isDarkTheme = isDark
+    }
+
+    fun saveSettings() { /* ... SharedPreferences ... */
+    }
 }
 
 // STATES MODELS
 data class WizardUiState(
-    var ip: String = "",
-    var apiKey: String = "",
+    var ip: String = "192.168.1.121",
+    var apiKey: String = "asdfasdfasdfasdfasdfasdfasdfabtc",
     var errorMsg: String? = null
 )
 

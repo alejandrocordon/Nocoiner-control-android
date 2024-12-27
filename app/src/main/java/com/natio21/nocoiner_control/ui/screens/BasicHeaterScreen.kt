@@ -5,13 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Icon
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.natio21.nocoiner_control.MainViewModel
 
 @Composable
 fun BasicHeaterScreen(viewModel: MainViewModel) {
@@ -42,7 +45,7 @@ fun BasicHeaterScreen(viewModel: MainViewModel) {
                 // Lógica para bajar
                 viewModel.changeTemperature(uiState.currentTemperature - 1)
             }) {
-                Icon(Icons.Default.Remove, contentDescription = "Decrease")
+                Icon(Icons.Default.Delete, contentDescription = "Decrease")
             }
             IconButton(onClick = {
                 // Lógica para subir
@@ -92,7 +95,7 @@ fun BasicHeaterScreen(viewModel: MainViewModel) {
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },
             title = { Text("Error") },
-            text = { Text(uiState.errorMsg) },
+            text = { Text(uiState.errorMsg!!) },
             confirmButton = {
                 TextButton(onClick = { viewModel.clearError() }) {
                     Text("OK")
