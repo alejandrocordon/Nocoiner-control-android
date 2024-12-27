@@ -55,7 +55,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         // Botón para ir a la web local
         Button(onClick = {
             //val ip = advancedState.minerIp
-            val ip = viewModel.getIpAndApiKey().first
+            val ip = viewModel.getIp()
             Log.d("AdvancedScreen", "IP: $ip")
             viewModel.openMinerWeb(ip)
         }) {

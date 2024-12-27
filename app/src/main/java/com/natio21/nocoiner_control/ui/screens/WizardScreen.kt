@@ -16,7 +16,7 @@ fun WizardScreen(
     viewModel: MainViewModel
 ) {
     // Aquí manejamos un estado local para IP y API Key o lo podemos alojar en el ViewModel
-    val uiState = viewModel.wizardUiState // data class { ip, apiKey, errorMsg, etc. }
+    val uiState = viewModel.appSettingsUiState // data class { ip, apiKey, errorMsg, etc. }
 
     Column(
         // Centrado en la pantalla

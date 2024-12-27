@@ -4,28 +4,29 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.natio21.nocoiner_control.openapi.client.models.UnlockRequest
 import com.natio21.nocoiner_control.ui.screens.AppNavHost
-import com.natio21.nocoiner_control.ui.screens.HomeScreen
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var minerApiService: MinerApiService
+    //@Inject
+    //lateinit var minerApiService: MinerApiService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            try {
+        //lifecycleScope.launch {
+            /*try {
                 val apikeysApi = minerApiService.getApiKeys("asdfasdfasdfasdfasdfasdfasdfabtc")
                 apikeysApi.forEach() {
                     Log.d("MainActivity", "API Keys: ${it.key} ${it.description}")
@@ -79,28 +80,28 @@ class MainActivity : ComponentActivity() {
                     Log.d("MainActivity", "frequency : ${it.frequency}")
                     Log.d("MainActivity", "voltage : ${it.voltage}")
                     Log.d("MainActivity", "chipTemp : ${it.chipTemp}")
-                }
+                }*/
 
-                setContent {
-                    NocoinercontrolTheme {
-                        //HomeScreen(
-                        //    lifecycleScope = lifecycleScope,
-                        //    minerApiService = minerApiService
-                        //)
-
-
-                        val navController = rememberNavController()
-                        val viewModel: MainViewModel = viewModel()
-                        AppNavHost(navController = navController, viewModel = viewModel)
-
-                    }
+            setContent {
+                NocoinercontrolTheme {
+                    //HomeScreen(
+                    //    lifecycleScope = lifecycleScope,
+                    //    minerApiService = minerApiService
+                    //)
 
 
+                    val navController = rememberNavController()
+                    //val viewModel: MainViewModel = viewModel()
+                    val viewModel: MainViewModel = hiltViewModel()
+                    AppNavHost(navController = navController, viewModel = viewModel)
 
                 }
-            } catch (e: Exception) {
-                Log.e("MainActivity", "Error al obtener temperatura", e)
+
+
             }
-        }
+            //} catch (e: Exception) {
+            //    Log.e("MainActivity", "Error al obtener temperatura", e)
+            //}
+        //}
     }
 }

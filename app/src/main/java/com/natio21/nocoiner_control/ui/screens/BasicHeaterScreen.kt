@@ -1,5 +1,6 @@
 package com.natio21.nocoiner_control.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,29 +16,72 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.natio21.nocoiner_control.MainViewModel
 
 @Composable
-fun BasicHeaterScreen(viewModel: MainViewModel) {
-    val uiState = viewModel.basicUiState
-    val coroutineScope = rememberCoroutineScope()
+fun BasicHeaterScreen(
+    viewModel: MainViewModel,
+) {
+    //val uiState = viewModel.basicUiState
+    val uiState by viewModel.basicUiState.collectAsState()
+
+
+    LaunchedEffect(Unit) {
+        viewModel.loadTemperature()
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize().padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Text(text = "Current temperature: ${uiState.currentTemperature} °C", style = MaterialTheme.typography.titleLarge)
+        if (uiState.isLoading) {
+            CircularProgressIndicator()
+        } else {
+            Text("Current temperature: ${uiState.currentTemperature} °C")
+        }
+        Button(onClick = { viewModel.loadTemperature() }) {
+            Text("Refresh Temperature")
+        }
+
+        uiState.errorMsg?.let { error ->
+            AlertDialog(
+                onDismissRequest = {
+                    Log.d("BasicHeaterScreen", "Dismissing error dialog")
+                    viewModel.clearError()
+
+                },
+                title = { Text("Error") },
+                text = { Text(error) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        // podrías limpiar el error en el ViewModel
+                        // _basicUiState.update { it.copy(errorMsg = null) }
+                    }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
+        Text(
+            text = "Current temperature: ${uiState.currentTemperature} °C",
+            style = MaterialTheme.typography.titleLarge
+        )
 
         // Control: botones +/- (y/o slider)
         Row {

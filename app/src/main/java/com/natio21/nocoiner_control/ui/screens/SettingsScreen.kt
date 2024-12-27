@@ -17,31 +17,37 @@ import com.natio21.nocoiner_control.MainViewModel
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel) {
-    val settingsState = viewModel.settingsUiState
+    val settingsState = viewModel.appSettingsUiState
     val isDarkTheme = settingsState.isDarkTheme
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text("Settings", style = MaterialTheme.typography.titleLarge)
 
         // Mostrar IP y API Key
-        OutlinedTextField(
-            value = settingsState.ip,
-            onValueChange = { viewModel.onSettingsIpChange(it) },
-            label = { Text("Miner IP/DNS") }
-        )
-        OutlinedTextField(
-            value = settingsState.apiKey,
-            onValueChange = { viewModel.onSettingsApiKeyChange(it) },
-            label = { Text("API Key") }
-        )
+        settingsState.ip?.let {
+            OutlinedTextField(
+                value = it,
+                onValueChange = { viewModel.onSettingsIpChange(it) },
+                label = { Text("Miner IP/DNS") }
+            )
+        }
+        settingsState.apiKey?.let {
+            OutlinedTextField(
+                value = it,
+                onValueChange = { viewModel.onSettingsApiKeyChange(it) },
+                label = { Text("API Key") }
+            )
+        }
 
         // Tema: Switch
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Dark Mode")
-            Switch(
-                checked = isDarkTheme,
-                onCheckedChange = { viewModel.onDarkThemeToggled(it) }
-            )
+            if (isDarkTheme != null) {
+                Switch(
+                    checked = isDarkTheme,
+                    onCheckedChange = { viewModel.onDarkThemeToggled(it) }
+                )
+            }
         }
 
         Button(

@@ -3,6 +3,9 @@ agp = "8.7.3"
 androidxMaterial = "1.5.0"
 converterGson = "2.11.0"
 hiltAndroid = "2.52"
+hiltAndroidVersion = "2.38.1"
+hiltNavigationCompose = "1.2.0"
+hiltNavigationComposeVersion = "1.0.0-alpha03"
 kotlin = "2.0.0"
 compose = "2.1.0"
 coreKtx = "1.15.0"
@@ -29,11 +32,14 @@ storage = "1.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-hilt-navigation-compose-v100alpha03 = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-material-v150 = { module = "androidx.compose.material:material", version.ref = "androidxMaterial" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
+hilt-android-v2381 = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

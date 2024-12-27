@@ -12,17 +12,18 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    // Métodos @Provides
 
+    // Ejemplo: proveer Retrofit
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.1.121/")
+            .baseUrl("http://192.168.1.121/") // Ajusta tu IP/base URL
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
+    // Aquí provees la implementación de MinerApiService
     @Provides
     @Singleton
     fun provideMinerApiService(retrofit: Retrofit): MinerApiService {
