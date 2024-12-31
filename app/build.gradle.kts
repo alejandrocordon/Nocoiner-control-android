@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
-    id("dagger.hilt.android.plugin")
+    kotlin("kapt")
+    alias(libs.plugins.google.dagger.hilt)
+
 }
 
 android {
@@ -60,6 +61,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.storage)
+    implementation(libs.androidx.hilt.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,6 +72,8 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.moshi)
@@ -80,7 +84,6 @@ dependencies {
 
 }
 
-// Configuración de Kapt
 kapt {
     correctErrorTypes = true
 }

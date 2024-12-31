@@ -10,21 +10,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.natio21.nocoiner_control.MinerApiService
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
@@ -33,43 +23,7 @@ import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
-import com.natio21.nocoiner_control.ui.theme.NatioOrange80
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-@Composable
-fun HomeScreen(
-    modifier: Modifier = Modifier,
-    currentTemperature: Double? = null,
-    onRefreshClick: () -> Unit = {}
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(id = R.string.welcome_message), style = MaterialTheme.typography.titleLarge)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (currentTemperature == null) {
-            Text(text = stringResource(id = R.string.loading_temperature))
-        } else {
-            Text(
-                text = stringResource(id = R.string.current_temperature, currentTemperature.toInt()),
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(onClick = onRefreshClick) {
-            Text(stringResource(id = R.string.refresh_data))
-        }
-    }
-}
 
 @Composable
 fun HomeScreen(

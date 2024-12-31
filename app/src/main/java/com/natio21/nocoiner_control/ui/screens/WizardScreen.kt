@@ -1,35 +1,46 @@
 package com.natio21.nocoiner_control.ui.screens
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.natio21.nocoiner_control.MainViewModel
+import com.natio21.nocoiner_control.MinerPrefs
 
 @Composable
 fun WizardScreen(
     onWizardComplete: () -> Unit,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
 ) {
     // Aquí manejamos un estado local para IP y API Key o lo podemos alojar en el ViewModel
-    val uiState = viewModel.wizardUiState // data class { ip, apiKey, errorMsg, etc. }
+    val uiState = viewModel.appSettingsUiState // data class { ip, apiKey, errorMsg, etc. }
 
     Column(
-        // Diseño que prefieras
+        // Centrado en la pantalla
+        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+
     ) {
         Text(text = "Setup your Miner")
 
         OutlinedTextField(
-            value = uiState.ip,
-            onValueChange = { viewModel.updateIp(it) },
-            label = { Text("Miner IP or DNS") }
+            value = uiState.value.ip,
+            onValueChange = {
+                viewModel.updateIp(it)
+                            },
+            label = { Text("Miner IP or DNS") },
+            placeholder = { Text("Miner IP or DNS") },
         )
 
         OutlinedTextField(
-            value = uiState.apiKey,
-            onValueChange = { viewModel.updateApiKey(it) },
-            label = { Text("API Key") }
+            value = uiState.value.apiKey,
+            onValueChange = {
+                viewModel.updateApiKey(it)
+                            },
+            label = { Text("API Key") },
+            placeholder = { Text("API Key") },
         )
 
         Button(
@@ -39,8 +50,10 @@ fun WizardScreen(
                 // 2. Validar API Key
                 // 3. Guardar en SharedPreferences
                 // 4. Llamar onWizardComplete()
-                viewModel.validateAndSave {
+                viewModel.validateAndSave() { it ->
                     if (it) {
+                        viewModel.saveIp(uiState.value.ip)
+                        viewModel.saveApiKey(uiState.value.ip)
                         onWizardComplete()
                     } else {
                         // mostrar error en uiState
@@ -52,8 +65,8 @@ fun WizardScreen(
         }
 
         // Error message if any
-        if (uiState.errorMsg != null) {
-            Text(uiState.errorMsg, color = MaterialTheme.colorScheme.error)
+        if (uiState.value.errorMsg != null) {
+            Text(uiState.value.errorMsg!!, color = MaterialTheme.colorScheme.error)
         }
     }
 }

@@ -38,7 +38,8 @@ interface MinerApiService {
 
     @GET("api/v1/summary")
     suspend fun getSummary(
-        @Header("x-api-key") apiKey: String): Summary
+        @Header("x-api-key") apiKey: String
+    ): Summary
 
     @GET("api/v1/chains")
     suspend fun getChains(): List<AntmChain>

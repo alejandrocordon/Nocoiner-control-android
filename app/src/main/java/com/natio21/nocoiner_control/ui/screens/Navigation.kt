@@ -4,11 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.natio21.nocoiner_control.MainViewModel
 
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    viewModel: MainViewModel // tu ViewModel
+    viewModel: MainViewModel
 ) {
     NavHost(navController, startDestination = Routes.Splash.route) {
 
@@ -24,6 +25,7 @@ fun AppNavHost(
                         popUpTo(Routes.Splash.route) { inclusive = true }
                     }
                 },
+                context = navController.context,
                 viewModel = viewModel
             )
         }
