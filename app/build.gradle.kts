@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
+    kotlin("kapt")
+    alias(libs.plugins.google.dagger.hilt)
+
 }
 
 android {
@@ -69,9 +70,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // Hilt
-    implementation(libs.hilt.android)
+    implementation(libs.google.dagger.hilt)
+    kapt(libs.google.dagger.hilt.compiler)
 
-    kapt(libs.hilt.compiler)
+
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.moshi)
@@ -82,7 +84,6 @@ dependencies {
 
 }
 
-// Configuración de Kapt
 kapt {
     correctErrorTypes = true
 }
