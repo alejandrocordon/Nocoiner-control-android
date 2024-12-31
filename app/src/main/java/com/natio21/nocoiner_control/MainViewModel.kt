@@ -1,13 +1,18 @@
 package com.natio21.nocoiner_control
 
 import android.app.Application
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
+import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
+import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
+import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
+import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +22,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// STATES
 val wizardUiState: WizardUiState = WizardUiState()
 
 @HiltViewModel
@@ -29,11 +33,12 @@ class MainViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
 
-    // Ejemplo de un estado de UI para el modo básico
     private val _basicUiState = MutableStateFlow(BasicUiState())
-    val appSettingsUiState = AppSettingsUiState()
+    //val appSettingsUiState = AppSettingsUiState()
+    var appSettingsUiState = mutableStateOf(AppSettingsUiState())
+        private set
 
-    //val basicUiState: BasicUiState = BasicUiState()
+
     val advancedUiState: AdvancedUiState = AdvancedUiState()
     val basicUiState: StateFlow<BasicUiState> = _basicUiState
 
@@ -77,16 +82,47 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun setTemperature(newTemp: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _basicUiState.update { it.copy(isLoading = true) }
+            try {
+                val settingsRequest = SettingsRequest(
+                    miner = MinerSettings(
+                        cooling = CoolingSettings(
+                            mode = ModeSettings(name = "auto", param = newTemp),
+                            fan_min_count = 4,
+                            fan_min_duty = 10
+                        )
+                    )
+                )
+                val settingsResponse = minerApiService.updateSettings(getApiKey(), settingsRequest)
+                _basicUiState.update {
+                    it.copy(
+                        currentTemperature = settingsResponse.miner.cooling.mode.param,
+                        isLoading = false,
+                        showSuccessMessage = true,
+                        errorMsg = null
+                    )
+                }
+            } catch (e: Exception) {
+                _basicUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = "Error al actualizar temperatura: ${e.message}"
+                    )
+                }
+            }
+        }
+    }
+
     fun loadTemperature() {
         viewModelScope.launch(Dispatchers.IO) {
             // 1. Indicar que estamos cargando
             _basicUiState.update { it.copy(isLoading = true, errorMsg = null) }
 
 
-            // 2. Hacer la llamada “lenta” (red, disco, etc.)
             try {
                 val settingsResponse = minerApiService.getSettings(getApiKey())
-                //_appSettingsResponse.postValue(settingsResponse)
 
                 // 3. Actualizar el estado con el nuevo valor
                 _basicUiState.update {
@@ -95,39 +131,29 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 // Manejar error y volver a notificar que no está cargando
-                _basicUiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMsg = "Error al consultar temperatura: ${e.message}"
-                    )
-                }
+                Log.e(TAG,"Error al consultar temperatura: ${e.message} ip: ${appSettingsUiState.value.ip} apiKey: ${appSettingsUiState.value.apiKey}")
+                //_basicUiState.update {
+                //    it.copy(
+                //        isLoading = false,
+                //        errorMsg = "Error al consultar temperatura: ${e.message} ip: ${appSettingsUiState.value.ip} apiKey: ${appSettingsUiState.value.apiKey}"
+                //    )
+                //}
             }
         }
     }
 
     // Wizard
-    fun updateIp(ip: String) {
-        wizardUiState.ip = ip
+    fun updateIp(newIp: String) {
+        appSettingsUiState.value = appSettingsUiState.value.copy(ip = newIp)
     }
 
-    fun updateApiKey(key: String) {
-        wizardUiState.apiKey = key
+    fun updateApiKey(newApiKey: String) {
+        appSettingsUiState.value = appSettingsUiState.value.copy(apiKey = newApiKey)
     }
 
-    fun validateAndSave(callback: (Boolean) -> Unit) {
-        viewModelScope.launch {
-            minerPrefs.saveIp(wizardUiState.ip)
-            minerPrefs.saveApiKey(wizardUiState.apiKey)
-
-            val isValid = hasSavedData()
-            if (isValid) {
-                // Guardar en SharedPreference
-                callback(true)
-            } else {
-                wizardUiState.errorMsg = "Cannot validate IP/API Key"
-                callback(false)
-            }
-        }
+    fun validateAndSave(onComplete: (Boolean) -> Unit) {
+        val isValid = true
+        onComplete(isValid)
     }
 
     // Basic
@@ -165,26 +191,20 @@ class MainViewModel @Inject constructor(
         context.startActivity(intent)
     }
 
-    // Settings
-    fun onSettingsIpChange(value: String) {
-        appSettingsUiState.ip = value
-    }
-
-    fun onSettingsApiKeyChange(value: String) {
-        appSettingsUiState.apiKey = value
-    }
-
-    fun onDarkThemeToggled(isDark: Boolean) {
-        appSettingsUiState.isDarkTheme = isDark
-    }
-
     fun saveSettings() { /* ... SharedPreferences ... */
+    }
+
+    fun saveIp(ip: String) {
+        minerPrefs.saveIp(ip)
+    }
+    fun saveApiKey(apiKey: String) {
+        minerPrefs.saveApiKey(apiKey)
     }
 }
 
 // STATES MODELS
 data class WizardUiState(
-    var ip: String = "192.168.1.121",
+    var ip: String = "http://192.168.1.121",
     var apiKey: String = "asdfasdfasdfasdfasdfasdfasdfabtc",
     var errorMsg: String? = null
 )

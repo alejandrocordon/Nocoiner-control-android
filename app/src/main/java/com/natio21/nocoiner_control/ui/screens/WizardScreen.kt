@@ -8,12 +8,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.natio21.nocoiner_control.MainViewModel
+import com.natio21.nocoiner_control.MinerPrefs
 
 @Composable
 fun WizardScreen(
-    context: Context,
     onWizardComplete: () -> Unit,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
 ) {
     // Aquí manejamos un estado local para IP y API Key o lo podemos alojar en el ViewModel
     val uiState = viewModel.appSettingsUiState // data class { ip, apiKey, errorMsg, etc. }
@@ -26,7 +26,7 @@ fun WizardScreen(
         Text(text = "Setup your Miner")
 
         OutlinedTextField(
-            value = uiState.ip,
+            value = uiState.value.ip,
             onValueChange = {
                 viewModel.updateIp(it)
                             },
@@ -35,7 +35,7 @@ fun WizardScreen(
         )
 
         OutlinedTextField(
-            value = uiState.apiKey,
+            value = uiState.value.apiKey,
             onValueChange = {
                 viewModel.updateApiKey(it)
                             },
@@ -52,6 +52,8 @@ fun WizardScreen(
                 // 4. Llamar onWizardComplete()
                 viewModel.validateAndSave() { it ->
                     if (it) {
+                        viewModel.saveIp(uiState.value.ip)
+                        viewModel.saveApiKey(uiState.value.ip)
                         onWizardComplete()
                     } else {
                         // mostrar error en uiState
@@ -63,8 +65,8 @@ fun WizardScreen(
         }
 
         // Error message if any
-        if (uiState.errorMsg != null) {
-            Text(uiState.errorMsg!!, color = MaterialTheme.colorScheme.error)
+        if (uiState.value.errorMsg != null) {
+            Text(uiState.value.errorMsg!!, color = MaterialTheme.colorScheme.error)
         }
     }
 }

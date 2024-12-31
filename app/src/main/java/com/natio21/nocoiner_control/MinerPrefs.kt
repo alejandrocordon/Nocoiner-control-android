@@ -12,7 +12,9 @@ class MinerPrefs @Inject constructor(
             = context.getSharedPreferences("nocoiner_prefs", Context.MODE_PRIVATE)
 
     fun getIp(): String? = prefs.getString("ip_address", null)
+
     fun getApiKey(): String? = prefs.getString("api_key", null)
+
     fun saveIp(ip: String) {
         prefs.edit().putString("ip_address", ip).apply()
     }

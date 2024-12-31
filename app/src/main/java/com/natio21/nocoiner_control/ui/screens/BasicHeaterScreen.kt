@@ -1,11 +1,17 @@
 package com.natio21.nocoiner_control.ui.screens
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Snackbar
@@ -16,20 +22,35 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import com.natio21.nocoiner_control.MainViewModel
+import com.natio21.nocoiner_control.R
+import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
+import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
+import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
+import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
+import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun BasicHeaterScreen(
@@ -39,9 +60,18 @@ fun BasicHeaterScreen(
     val uiState by viewModel.basicUiState.collectAsState()
 
 
-    LaunchedEffect(Unit) {
-        viewModel.loadTemperature()
+    DisposableEffect(Unit) {
+        val job = viewModel.viewModelScope.launch {
+            while (true) {
+                viewModel.loadTemperature()
+                delay(5000) // Wait 5 seconds
+            }
+        }
+        onDispose {
+            job.cancel()
+        }
     }
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -50,6 +80,12 @@ fun BasicHeaterScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.dosc),
+            contentDescription = "2c Image",
+            modifier = Modifier.size(200.dp)
+        )
+
         if (uiState.isLoading) {
             CircularProgressIndicator()
         } else {
@@ -83,7 +119,45 @@ fun BasicHeaterScreen(
             style = MaterialTheme.typography.titleLarge
         )
 
-        // Control: botones +/- (y/o slider)
+
+        Button(
+            onClick = {
+                Log.d("HomeScreen", "Temperatura al maximo 80ºC")
+                viewModel.setTemperature(80)
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(id = R.string.max_temperature))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                Log.d("HomeScreen", "Temperatura al maximo 70ºC")
+                viewModel.setTemperature(70)
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(id = R.string.medium_temperature))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                Log.d("HomeScreen", "Temperatura al minimo 65ºC")
+                viewModel.setTemperature(65)
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(stringResource(id = R.string.min_temperature))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+
         Row {
             IconButton(onClick = {
                 // Lógica para bajar
@@ -99,8 +173,6 @@ fun BasicHeaterScreen(
             }
         }
 
-        // Temporizador
-        // Podrías usar un TimePicker o un NumberPicker, aquí un demo con un OutlinedTextField
         OutlinedTextField(
             value = uiState.timerMinutes.toString(),
             onValueChange = { newValue ->
@@ -135,6 +207,29 @@ fun BasicHeaterScreen(
     }
 
     // Manejo de diálogos de error
+    if (uiState.errorMsg != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.clearError() },
+            title = { Text("Error") },
+            text = { Text(uiState.errorMsg!!) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.clearError() }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
+    if (uiState.showSuccessMessage) {
+        SnackbarHost(
+            hostState = remember { SnackbarHostState() },
+            snackbar = {
+                Snackbar {
+                    Text("Temperature Updated!")
+                }
+            }
+        )
+    }
+
     if (uiState.errorMsg != null) {
         AlertDialog(
             onDismissRequest = { viewModel.clearError() },
