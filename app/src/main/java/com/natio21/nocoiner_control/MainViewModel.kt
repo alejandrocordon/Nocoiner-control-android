@@ -1,11 +1,13 @@
 package com.natio21.nocoiner_control
 
 import android.app.Application
+import android.content.ActivityNotFoundException
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -191,13 +193,32 @@ class MainViewModel @Inject constructor(
     }
 
     fun createNewPool() { /* ... */
+        Toast.makeText(context, "Functionality not implemented yet", Toast.LENGTH_SHORT).show()
     }
 
+    //fun openMinerWeb() {
+    //    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(minerPrefs.getIp())).apply {
+    //        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    //    }
+    //    context.startActivity(intent)
+    //}
+
     fun openMinerWeb() {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(minerPrefs.getIp())).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val url = minerPrefs.getIp()
+        Log.d("MainViewModel", "URL: $url")
+        if (!url.isNullOrEmpty()) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            try {
+                context.startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(context, "No application can handle this request. Please install a web browser.", Toast.LENGTH_LONG).show()
+                e.printStackTrace()
+            }
+        } else {
+            Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show()
         }
-        context.startActivity(intent)
     }
 
 
