@@ -75,7 +75,7 @@ fun BasicHeaterScreen(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
