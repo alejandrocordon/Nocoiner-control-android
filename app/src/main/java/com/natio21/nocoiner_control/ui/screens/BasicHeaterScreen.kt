@@ -64,7 +64,7 @@ fun BasicHeaterScreen(
         val job = viewModel.viewModelScope.launch {
             while (true) {
                 viewModel.loadTemperature()
-                delay(5000) // Wait 5 seconds
+                delay(5000)
             }
         }
         onDispose {

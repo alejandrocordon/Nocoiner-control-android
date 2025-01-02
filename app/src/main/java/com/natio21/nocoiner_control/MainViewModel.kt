@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.min
 
 val wizardUiState: WizardUiState = WizardUiState()
 
@@ -34,32 +37,47 @@ class MainViewModel @Inject constructor(
 
 
     private val _basicUiState = MutableStateFlow(BasicUiState())
-    //val appSettingsUiState = AppSettingsUiState()
-    var appSettingsUiState = mutableStateOf(AppSettingsUiState())
-        private set
+    val appSettingsUiState = AppSettingsUiState()
+    //var appSettingsUiState by mutableStateOf(AppSettingsUiState())
 
 
     val advancedUiState: AdvancedUiState = AdvancedUiState()
     val basicUiState: StateFlow<BasicUiState> = _basicUiState
 
+    var ip = mutableStateOf("")
+        private set
+
+    var apiKey = mutableStateOf("")
+        private set
+
+
+    fun getIp(): String? {
+        return minerPrefs.getIp()
+    }
+
+    fun getApiKey(): String? {
+        return minerPrefs.getApiKey()
+    }
+
+    fun updateIp(newIp: String) {
+        ip.value = newIp
+        minerPrefs.saveIp(newIp)
+    }
+
+    fun updateApiKey(newApiKey: String) {
+        apiKey.value = newApiKey
+        minerPrefs.saveApiKey(newApiKey)
+    }
 
     fun hasSavedData(): Boolean {
         return !minerPrefs.getIp().isNullOrEmpty() && !minerPrefs.getApiKey().isNullOrEmpty()
-    }
-
-    fun getIp(): String {
-        return minerPrefs.getIp().toString()
-    }
-
-    fun getApiKey(): String {
-        return minerPrefs.getApiKey().toString()
     }
 
     fun getSettings() {
         viewModelScope.launch(Dispatchers.IO) {
             _basicUiState.update { it.copy(isLoading = true) }
             try {
-                val settingsResponse = minerApiService.getSettings(getApiKey())
+                val settingsResponse = minerApiService.getSettings(minerPrefs.getApiKey().toString())
                 //_settingsResponse.postValue(settingsResponse)
                 _basicUiState.update {
                     it.copy(
@@ -95,7 +113,7 @@ class MainViewModel @Inject constructor(
                         )
                     )
                 )
-                val settingsResponse = minerApiService.updateSettings(getApiKey(), settingsRequest)
+                val settingsResponse = minerApiService.updateSettings(minerPrefs.getApiKey().toString(), settingsRequest)
                 _basicUiState.update {
                     it.copy(
                         currentTemperature = settingsResponse.miner.cooling.mode.param,
@@ -108,7 +126,7 @@ class MainViewModel @Inject constructor(
                 _basicUiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMsg = "Error al actualizar temperatura: ${e.message}"
+                        errorMsg = "Error al actualizar temperatura: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
                     )
                 }
             }
@@ -117,12 +135,11 @@ class MainViewModel @Inject constructor(
 
     fun loadTemperature() {
         viewModelScope.launch(Dispatchers.IO) {
-            // 1. Indicar que estamos cargando
             _basicUiState.update { it.copy(isLoading = true, errorMsg = null) }
 
 
             try {
-                val settingsResponse = minerApiService.getSettings(getApiKey())
+                val settingsResponse = minerApiService.getSettings(minerPrefs.getApiKey().toString())
 
                 // 3. Actualizar el estado con el nuevo valor
                 _basicUiState.update {
@@ -131,7 +148,7 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 // Manejar error y volver a notificar que no está cargando
-                Log.e(TAG,"Error al consultar temperatura: ${e.message} ip: ${appSettingsUiState.value.ip} apiKey: ${appSettingsUiState.value.apiKey}")
+                Log.e(TAG,"Error al consultar temperatura: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}")
                 //_basicUiState.update {
                 //    it.copy(
                 //        isLoading = false,
@@ -142,14 +159,6 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    // Wizard
-    fun updateIp(newIp: String) {
-        appSettingsUiState.value = appSettingsUiState.value.copy(ip = newIp)
-    }
-
-    fun updateApiKey(newApiKey: String) {
-        appSettingsUiState.value = appSettingsUiState.value.copy(apiKey = newApiKey)
-    }
 
     fun validateAndSave(onComplete: (Boolean) -> Unit) {
         val isValid = true
@@ -171,7 +180,7 @@ class MainViewModel @Inject constructor(
 
     // Para ocultar diálogos
     fun clearError() {
-        basicUiState.value?.errorMsg = null
+        basicUiState.value.errorMsg = null
     }
 
     // Advanced
@@ -184,28 +193,21 @@ class MainViewModel @Inject constructor(
     fun createNewPool() { /* ... */
     }
 
-    fun openMinerWeb(ip: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(ip)).apply {
+    fun openMinerWeb() {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(minerPrefs.getIp())).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(intent)
     }
 
-    fun saveSettings() { /* ... SharedPreferences ... */
-    }
 
-    fun saveIp(ip: String) {
-        minerPrefs.saveIp(ip)
-    }
-    fun saveApiKey(apiKey: String) {
-        minerPrefs.saveApiKey(apiKey)
-    }
+
+
 }
 
 // STATES MODELS
 data class WizardUiState(
-    var ip: String = "http://192.168.1.121",
-    var apiKey: String = "asdfasdfasdfasdfasdfasdfasdfabtc",
+
     var errorMsg: String? = null
 )
 
@@ -225,8 +227,8 @@ data class AdvancedUiState(
 )
 
 data class AppSettingsUiState(
-    var ip: String = "",
-    var apiKey: String = "",
+    var ip: String = "http://192.168.1.121",
+    var apiKey: String = "asdfasdfasdfasdfasdfasdfasdfabtc",
     var isDarkTheme: Boolean = false,
     var isLoading: Boolean = false,
     var errorMsg: String? = null
