@@ -26,15 +26,16 @@ fun WizardScreen(
     ) {
         Text(text = "Setup your Miner")
 
+
         OutlinedTextField(
-            value = viewModel.getIp() ?: "",
+            value = ip,
             onValueChange = { viewModel.updateIp(it) },
             label = { Text("Miner IP or DNS") },
             placeholder = { Text("Miner IP or DNS") },
         )
 
         OutlinedTextField(
-            value = viewModel.getApiKey()?: "",
+            value = apiKey,
             onValueChange = { viewModel.updateApiKey(it) },
             label = { Text("API Key") },
             placeholder = { Text("API Key") },
@@ -46,8 +47,8 @@ fun WizardScreen(
             onClick = {
                 viewModel.validateAndSave { isValid ->
                     if (isValid) {
-                        viewModel.updateIp(ip)
-                        viewModel.updateApiKey(apiKey)
+                        //viewModel.updateIp(ip)
+                        //viewModel.updateApiKey(apiKey)
                         onWizardComplete()
                         Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
                     } else {

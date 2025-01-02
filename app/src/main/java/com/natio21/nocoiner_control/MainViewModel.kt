@@ -44,6 +44,30 @@ class MainViewModel @Inject constructor(
     val advancedUiState: AdvancedUiState = AdvancedUiState()
     val basicUiState: StateFlow<BasicUiState> = _basicUiState
 
+    var ip = mutableStateOf("")
+        private set
+
+    var apiKey = mutableStateOf("")
+        private set
+
+
+    fun getIp(): String? {
+        return minerPrefs.getIp()
+    }
+
+    fun getApiKey(): String? {
+        return minerPrefs.getApiKey()
+    }
+
+    fun updateIp(newIp: String) {
+        ip.value = newIp
+        minerPrefs.saveIp(newIp)
+    }
+
+    fun updateApiKey(newApiKey: String) {
+        apiKey.value = newApiKey
+        minerPrefs.saveApiKey(newApiKey)
+    }
 
     fun hasSavedData(): Boolean {
         return !minerPrefs.getIp().isNullOrEmpty() && !minerPrefs.getApiKey().isNullOrEmpty()
@@ -176,30 +200,8 @@ class MainViewModel @Inject constructor(
         context.startActivity(intent)
     }
 
-    var ip = mutableStateOf("")
-        private set
-
-    var apiKey = mutableStateOf("")
-        private set
 
 
-    fun getIp(): String? {
-        return minerPrefs.getIp()
-    }
-
-    fun getApiKey(): String? {
-        return minerPrefs.getApiKey()
-    }
-
-    fun updateIp(newIp: String) {
-        ip.value = newIp
-        minerPrefs.saveIp(newIp)
-    }
-
-    fun updateApiKey(newApiKey: String) {
-        apiKey.value = newApiKey
-        minerPrefs.saveApiKey(newApiKey)
-    }
 
 }
 

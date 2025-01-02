@@ -24,20 +24,20 @@ fun SettingsScreen(viewModel: MainViewModel) {
         Text(text = "Setup your Miner")
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Ip: ${viewModel.getIp().toString()}")
+        Text(text = "Ip: ${ip}")
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "ApiKey: ${viewModel.getApiKey().toString()}")
+        Text(text = "ApiKey: ${apiKey}")
 
 
         OutlinedTextField(
-            value = viewModel.getIp().toString(),
+            value = ip,
             onValueChange = { viewModel.updateIp(it) },
             label = { Text("Miner IP or DNS") },
             placeholder = { Text("Miner IP or DNS") },
         )
 
         OutlinedTextField(
-            value = viewModel.getApiKey().toString(),
+            value = apiKey,
             onValueChange = { viewModel.updateApiKey(it) },
             label = { Text("API Key") },
             placeholder = { Text("API Key") },
