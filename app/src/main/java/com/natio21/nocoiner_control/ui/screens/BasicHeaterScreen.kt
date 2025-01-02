@@ -89,11 +89,18 @@ fun BasicHeaterScreen(
         if (uiState.isLoading) {
             CircularProgressIndicator()
         } else {
-            Text("Current temperature: ${uiState.currentTemperature} °C")
+            Text(
+                text = "Current temperature: ${uiState.currentTemperature} °C",
+                style = MaterialTheme.typography.titleLarge
+            )
         }
-        Button(onClick = { viewModel.loadTemperature() }) {
-            Text("Refresh Temperature")
-        }
+        Spacer(modifier = Modifier.height(16.dp))
+        //Button(onClick = { viewModel.loadTemperature() },
+        //    shape = RoundedCornerShape(8.dp),
+        //    colors = ButtonDefaults.buttonColors(NatioOrange40),
+        //    modifier = Modifier.fillMaxWidth()) {
+        //    Text("Refresh Temperature")
+        //}
 
         uiState.errorMsg?.let { error ->
             AlertDialog(
@@ -114,10 +121,7 @@ fun BasicHeaterScreen(
                 }
             )
         }
-        Text(
-            text = "Current temperature: ${uiState.currentTemperature} °C",
-            style = MaterialTheme.typography.titleLarge
-        )
+
 
 
         Button(
@@ -158,39 +162,39 @@ fun BasicHeaterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
 
-        Row {
-            IconButton(onClick = {
-                // Lógica para bajar
-                viewModel.changeTemperature(uiState.currentTemperature - 1)
-            }) {
-                Icon(Icons.Default.Delete, contentDescription = "Decrease")
-            }
-            IconButton(onClick = {
-                // Lógica para subir
-                viewModel.changeTemperature(uiState.currentTemperature + 1)
-            }) {
-                Icon(Icons.Default.Add, contentDescription = "Increase")
-            }
-        }
-
-        OutlinedTextField(
-            value = uiState.timerMinutes.toString(),
-            onValueChange = { newValue ->
-                // Manejo de conversion a Int
-                viewModel.updateTimer(newValue.toIntOrNull() ?: 0)
-            },
-            label = { Text("Timer (minutes)") }
-        )
-
-        Button(
-            onClick = {
-                viewModel.startTimer {
-                    // al finalizar, puedes mostrar un snackbar o algo
-                }
-            }
-        ) {
-            Text("Start Timer")
-        }
+        //Row {
+        //    IconButton(onClick = {
+        //        // Lógica para bajar
+        //        viewModel.changeTemperature(uiState.currentTemperature - 1)
+        //    }) {
+        //        Icon(Icons.Default.Delete, contentDescription = "Decrease")
+        //    }
+        //    IconButton(onClick = {
+        //        // Lógica para subir
+        //        viewModel.changeTemperature(uiState.currentTemperature + 1)
+        //    }) {
+        //        Icon(Icons.Default.Add, contentDescription = "Increase")
+        //    }
+        //}
+//
+        //OutlinedTextField(
+        //    value = uiState.timerMinutes.toString(),
+        //    onValueChange = { newValue ->
+        //        // Manejo de conversion a Int
+        //        viewModel.updateTimer(newValue.toIntOrNull() ?: 0)
+        //    },
+        //    label = { Text("Timer (minutes)") }
+        //)
+//
+        //Button(
+        //    onClick = {
+        //        viewModel.startTimer {
+        //            // al finalizar, puedes mostrar un snackbar o algo
+        //        }
+        //    }
+        //) {
+        //    Text("Start Timer")
+        //}
     }
 
     // Manejo de snackbars
