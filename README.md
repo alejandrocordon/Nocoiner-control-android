@@ -8,45 +8,75 @@
 
 # Nocoiner Control App
 
-## Description
-**Nocoiner Control App** is an Android application developed to manage **Nocoiner** devices customized by **Natio21**. Nocoiners are unique devices designed to act as heaters while mining Bitcoin, maximizing energy efficiency by repurposing mining heat for practical use.
 
-The app offers an intuitive interface to control the heating output, configure mining pools, and schedule operations.
+**Nocoiner Control App** is an Android application designed to manage and monitor a “Nocoiner” miner device over the local network. It provides a user-friendly interface for configuring network settings, adjusting temperature controls, viewing mining pools, and more.
 
-## Features
-- **Heating Control:** Adjust the heating power of the Nocoiner device with a user-friendly interface resembling an electric heater.
-- **Timer Functionality:** Set a timer to automatically turn the device on or off at specified times.
-- **Pool Configuration:** Manage mining pool settings, including pool URL, username, and password.
-- **Auto Discovery:** Automatically scans the local network to detect available Nocoiner devices on startup.
-- **Splash Screen:** Displays the **Natio21** logo while the app initializes and discovers devices.
+---
 
-## How It Works
-1. Upon launch, the app performs an automatic network scan to discover all available Nocoiner devices.
-2. Once devices are detected, users can:
-   - Adjust the heat output via a slider or predefined settings.
-   - Set timers for scheduled operations (e.g., heat for 2 hours and then turn off).
-   - Navigate to the configuration section to input or modify mining pool credentials.
-3. All changes are sent to the device in real time via the API.
+## Key Features
+- **Setup Wizard**  
+  A guided wizard screen for first-time configuration (added in **v0.2.0**) to help users quickly set their miner IP and API Key.
+  
+- **Basic Mode**  
+  Allows you to monitor the current temperature of the miner and adjust setpoints (maximum, average, minimum). Future versions will include an option to “sleep” the miner from this screen.
+
+- **Advanced Mode**  
+  Provides access to pool management—adding new pools or navigating to the miner’s built-in web interface. Future plans include regular hashrate updates, multi-miner support, and more.
+
+- **Settings**  
+  Lets you store and update the local IP and API Key for the miner. A “Save” action is now confirmed by a Toast message (planned feature) to assure users the config was successful.
+
+---
 
 ## Requirements
-1. An Android device running Android 8.0 or higher.
-2. A local network with Nocoiner devices connected.
-3. Mining pool credentials (if customization is required).
+- **Android Studio** (latest version recommended)  
+- **Minimum SDK**: 21 (Lollipop)  
+- **Kotlin** and **Jetpack Compose** for UI  
+- **Hilt** for dependency injection  
+- **OkHttp/Retrofit** (or similar) to connect to the miner’s API (details may vary)
 
-## Future Enhancements
-- Add iOS support to expand compatibility.
-- Include mining monitoring capabilities (e.g., hashrate, temperature, energy consumption).
-- Enable remote control over the internet for off-network management.
-- Integrate with smart home platforms like Home Assistant for advanced automation.
+---
 
-## Getting Started
-1. **Install the App:** Download the APK and install it on your Android device.
-2. **Connect to Network:** Ensure your Android device and Nocoiner are on the same local network.
-3. **Launch and Discover Devices:** Open the app to detect Nocoiner devices automatically.
-4. **Configure Pools:** Navigate to the settings menu to set up mining pool details.
-5. **Start Heating:** Use the control interface to adjust the heat or schedule operations.
+## Installation & Setup
+1. **Clone or download** this repository.  
+2. **Open** it in Android Studio.  
+3. **Sync** Gradle, ensuring you have all required plugins (Hilt, Compose, etc.).  
+4. **Run** the app on an emulator or physical device connected to the same network as the miner.  
+5. **On first launch**, the Wizard will prompt for the local IP and API Key. If these are valid, the Basic and Advanced screens will become available.
 
-<img src="Screenshot_20241224_144219.png" alt="drawing" width="200" align="center"/>
+---
 
-## Contribution
-This project is developed and maintained by **Alejandro Cordón** in collaboration with **Natio21**. Contributions and feedback are welcome to enhance its functionality further.
+## Release Notes
+### Version 0.2.0
+- **New:** Setup wizard screen for initial configuration.  
+- **Improvements:** UI alignment and spacing; enhanced state management in `MainViewModel`.  
+- **Bug Fixes:**  
+  - Fixed IME issues preventing text input.  
+  - Resolved `ActivityNotFoundException` when opening a URL.  
+- **Technical Changes:** Updated dependencies and Gradle configuration for better performance.  
+- **Known Issues:** Certain features (like creating new pools) are not fully implemented and will show a Snackbar placeholder.
+
+*(For more details, see the [Release Notes for 0.2.0](#) section or the [issues page](#) in this repository.)*
+
+---
+
+## Roadmap
+- **Multi-Miner Support:** Manage multiple Nocoiners within the same app.  
+- **Sleep/Power Control:** A “Sleep Miner” button for quick power down.  
+- **Auto-Refresh Hashrate:** Display and periodically update miner hashrate in the Advanced screen.  
+- **Scheduling:** Potential to schedule times for hashing or sleep.  
+- **Further UI Enhancements:** Refining layouts and theming consistency.
+
+---
+
+## Contributing
+We welcome feedback, pull requests, and issue reports. If you have suggestions or want to propose a new feature, please create a GitHub issue or open a pull request.
+
+---
+
+## License
+Licensed under [MIT License](LICENSE).  
+
+---
+**Thank you for using Nocoiner Control App!**  
+Your feedback is greatly appreciated and helps guide future development.
