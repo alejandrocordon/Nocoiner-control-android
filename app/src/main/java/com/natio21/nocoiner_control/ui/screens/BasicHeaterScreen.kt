@@ -83,7 +83,7 @@ fun BasicHeaterScreen(
         Image(
             painter = painterResource(id = R.drawable.dosc),
             contentDescription = "2c Image",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(100.dp)
         )
 
         if (uiState.isLoading) {

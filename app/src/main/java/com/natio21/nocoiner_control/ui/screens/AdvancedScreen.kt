@@ -51,7 +51,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         Image(
             painter = painterResource(id = R.drawable.dosc),
             contentDescription = "2c Image",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(100.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text("Mining Pools", style = MaterialTheme.typography.titleLarge)
