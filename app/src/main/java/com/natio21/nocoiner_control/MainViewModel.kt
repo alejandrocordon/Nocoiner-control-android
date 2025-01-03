@@ -8,9 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
@@ -25,7 +23,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.min
 
 val wizardUiState: WizardUiState = WizardUiState()
 
@@ -40,11 +37,9 @@ class MainViewModel @Inject constructor(
 
     private val _basicUiState = MutableStateFlow(BasicUiState())
     val appSettingsUiState = AppSettingsUiState()
-    //var appSettingsUiState by mutableStateOf(AppSettingsUiState())
-
-
-    val advancedUiState: AdvancedUiState = AdvancedUiState()
+    val _advancedUiState = MutableStateFlow(AdvancedUiState())
     val basicUiState: StateFlow<BasicUiState> = _basicUiState
+    val advancedUiState: StateFlow<AdvancedUiState> = _advancedUiState
 
     var ip = mutableStateOf("")
         private set
@@ -135,6 +130,31 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    //get hashrate in advancedUiState
+    fun getHashrate() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _advancedUiState.update { it.copy(isLoading = true) }
+            try {
+                val summary = minerApiService.getSummary(minerPrefs.getApiKey().toString())
+                val hashrate = summary.miner.minerStatus?.minerState
+                _advancedUiState.update {
+                    it.copy(
+                        hashrate = hashrate.toString(),
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _advancedUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = "Error al consultar hashrate: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+                    )
+                }
+            }
+        }
+    }
+
+
     fun loadTemperature() {
         viewModelScope.launch(Dispatchers.IO) {
             _basicUiState.update { it.copy(isLoading = true, errorMsg = null) }
@@ -196,13 +216,6 @@ class MainViewModel @Inject constructor(
         Toast.makeText(context, "Functionality not implemented yet", Toast.LENGTH_SHORT).show()
     }
 
-    //fun openMinerWeb() {
-    //    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(minerPrefs.getIp())).apply {
-    //        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    //    }
-    //    context.startActivity(intent)
-    //}
-
     fun openMinerWeb() {
         val url = minerPrefs.getIp()
         Log.d("MainViewModel", "URL: $url")
@@ -220,9 +233,6 @@ class MainViewModel @Inject constructor(
             Toast.makeText(context, "Invalid URL", Toast.LENGTH_SHORT).show()
         }
     }
-
-
-
 
 }
 
@@ -244,7 +254,8 @@ data class AdvancedUiState(
     val minerIp: String = "",
     val pools: List<Pool> = emptyList(),
     val hashrate: String = "", // Ej: “56 MH/s”
-    var isLoading: Boolean = false
+    var isLoading: Boolean = false,
+    var errorMsg: String? = null
 )
 
 data class AppSettingsUiState(
