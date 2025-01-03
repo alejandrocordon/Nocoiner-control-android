@@ -6,7 +6,6 @@
 
 
 
-# Nocoiner Control App
 
 
 **Nocoiner Control App** is an Android application designed to manage and monitor a “Nocoiner” miner device over the local network. It provides a user-friendly interface for configuring network settings, adjusting temperature controls, viewing mining pools, and more.
