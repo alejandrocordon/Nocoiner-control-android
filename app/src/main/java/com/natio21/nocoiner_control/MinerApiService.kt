@@ -5,7 +5,6 @@ import com.natio21.nocoiner_control.openapi.client.models.AntmChain
 import com.natio21.nocoiner_control.openapi.client.models.MinerStatus
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
-import com.natio21.nocoiner_control.openapi.client.models.Summary
 import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import com.natio21.nocoiner_control.openapi.client.models.TempSensor
 import com.natio21.nocoiner_control.openapi.client.models.UnlockRequest

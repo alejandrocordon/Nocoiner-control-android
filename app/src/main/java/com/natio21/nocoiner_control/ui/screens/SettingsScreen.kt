@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import com.natio21.nocoiner_control.ui.theme.NatioOrange40
 fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
     val ip by viewModel.ip
     val apiKey by viewModel.apiKey
+    val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -46,8 +48,10 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
             contentDescription = "2c Image",
             modifier = Modifier.size(100.dp)
         )
-        Text(text = "Setup your Miner",
-            style = MaterialTheme.typography.titleLarge)
+        Text(
+            text = "Setup your Miner",
+            style = MaterialTheme.typography.titleLarge
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Ip: ${viewModel.getIp()}")
@@ -73,22 +77,21 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
 
         Button(
             onClick = {
-                viewModel.validateAndSave { isValid ->
-                    if (isValid) {
+                viewModel.validateAndSave { isConnected ->
+                    if (isConnected) {
                         viewModel.updateIp(ip)
                         viewModel.updateApiKey(apiKey)
                         Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
                         Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
                             .show()
                         navController.navigate(MainRoutes.Basic.route)
-
                     } else {
-                        Log.e("SettingsScreen", "Error saving IP and API Key")
                         Toast.makeText(
                             viewModel.context,
-                            "Error saving settings",
+                            "Error ${appSettingsUiState.errorMsg}",
                             Toast.LENGTH_SHORT
-                        ).show()
+                        )
+                            .show()
                     }
                 }
             },

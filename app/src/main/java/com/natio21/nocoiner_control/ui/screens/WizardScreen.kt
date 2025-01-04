@@ -1,6 +1,7 @@
 package com.natio21.nocoiner_control.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ fun WizardScreen(
 ) {
     val ip by viewModel.ip
     val apiKey by viewModel.apiKey
+    val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,6 +52,15 @@ fun WizardScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = "Setup your Miner")
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Ip example : ")
+        Text(text = "http://192.168.1.121/")
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "ApiKey example (32 chars): ")
+        Text(text = "asdfasdfasdfasdfasdfasdfasdfabtc ")
+        Spacer(modifier = Modifier.height(16.dp))
+
 
         OutlinedTextField(
             value = ip,
@@ -68,14 +80,21 @@ fun WizardScreen(
 
         Button(
             onClick = {
-                viewModel.validateAndSave { isValid ->
-                    if (isValid) {
+                viewModel.validateAndSave { isConnected ->
+                    if (isConnected) {
                         viewModel.updateIp(ip)
                         viewModel.updateApiKey(apiKey)
                         Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
+                        Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
+                            .show()
                         onWizardComplete()
                     } else {
-                        Log.e("SettingsScreen", "Error saving IP and API Key")
+                        Toast.makeText(
+                            viewModel.context,
+                            "Error ${appSettingsUiState.errorMsg}",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
                     }
                 }
             },
