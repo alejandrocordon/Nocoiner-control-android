@@ -86,39 +86,41 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
                             .show()
                         navController.navigate(MainRoutes.Basic.route)
                     } else {
-                        Toast.makeText(viewModel.context, "Error ${appSettingsUiState.errorMsg}", Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            viewModel.context,
+                            "Error ${appSettingsUiState.errorMsg}",
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                     }
-
-
-            }
-    },
-    shape = RoundedCornerShape(8.dp),
-    colors = ButtonDefaults.buttonColors(NatioOrange40),
-    modifier = Modifier.fillMaxWidth()
-    ) {
-        Text("Save")
-    }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    Button(
-        onClick = {
-            viewModel.validateAndSave { isValid ->
-                if (isValid) {
-                    viewModel.updateIp("")
-                    viewModel.updateApiKey("")
-                    Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey cleared")
-                } else {
-                    Log.e("SettingsScreen", "Error clearing IP and API Key")
                 }
-            }
-        },
-        shape = RoundedCornerShape(8.dp),
-        colors = ButtonDefaults.buttonColors(NatioOrange40),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text("Clear data")
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Save")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                viewModel.validateAndSave { isValid ->
+                    if (isValid) {
+                        viewModel.updateIp("")
+                        viewModel.updateApiKey("")
+                        Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey cleared")
+                    } else {
+                        Log.e("SettingsScreen", "Error clearing IP and API Key")
+                    }
+                }
+            },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Clear data")
+        }
     }
-}
 }
