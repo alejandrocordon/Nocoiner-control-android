@@ -6,6 +6,7 @@ import com.natio21.nocoiner_control.openapi.client.models.MinerStatus
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
 import com.natio21.nocoiner_control.openapi.client.models.Summary
+import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import com.natio21.nocoiner_control.openapi.client.models.TempSensor
 import com.natio21.nocoiner_control.openapi.client.models.UnlockRequest
 import com.natio21.nocoiner_control.openapi.client.models.UnlockResponse
@@ -36,10 +37,15 @@ interface MinerApiService {
     @GET("api/v1/temp")
     suspend fun getTemperatureStatus(): TempSensor
 
+    //@GET("api/v1/summary")
+    //suspend fun getSummary(
+    //    @Header("x-api-key") apiKey: String
+    //): Summary
+
     @GET("api/v1/summary")
     suspend fun getSummary(
         @Header("x-api-key") apiKey: String
-    ): Summary
+    ): SummaryResponse
 
     @GET("api/v1/chains")
     suspend fun getChains(): List<AntmChain>
@@ -48,7 +54,6 @@ interface MinerApiService {
     suspend fun getSettings(
         @Header("x-api-key") apiKey: String
     ): SettingsResponse
-
 
     // Define the API post endpoints
     @POST("api/v1/reboot")
