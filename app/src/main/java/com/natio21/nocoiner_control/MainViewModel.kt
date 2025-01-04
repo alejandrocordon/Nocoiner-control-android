@@ -36,8 +36,10 @@ class MainViewModel @Inject constructor(
 
 
     private val _basicUiState = MutableStateFlow(BasicUiState())
-    val appSettingsUiState = AppSettingsUiState()
-    val _advancedUiState = MutableStateFlow(AdvancedUiState())
+    private val _advancedUiState = MutableStateFlow(AdvancedUiState())
+    private val _appSettingsUiState = MutableStateFlow(AppSettingsUiState())
+
+    val appSettingsUiState: StateFlow<AppSettingsUiState> = _appSettingsUiState
     val basicUiState: StateFlow<BasicUiState> = _basicUiState
     val advancedUiState: StateFlow<AdvancedUiState> = _advancedUiState
 
@@ -74,7 +76,8 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _basicUiState.update { it.copy(isLoading = true) }
             try {
-                val settingsResponse = minerApiService.getSettings(minerPrefs.getApiKey().toString())
+                val settingsResponse =
+                    minerApiService.getSettings(minerPrefs.getApiKey().toString())
                 //_settingsResponse.postValue(settingsResponse)
                 _basicUiState.update {
                     it.copy(
@@ -110,7 +113,10 @@ class MainViewModel @Inject constructor(
                         )
                     )
                 )
-                val settingsResponse = minerApiService.updateSettings(minerPrefs.getApiKey().toString(), settingsRequest)
+                val settingsResponse = minerApiService.updateSettings(
+                    minerPrefs.getApiKey().toString(),
+                    settingsRequest
+                )
                 _basicUiState.update {
                     it.copy(
                         currentTemperature = settingsResponse.miner.cooling.mode.param,
@@ -160,16 +166,22 @@ class MainViewModel @Inject constructor(
 
 
             try {
-                val settingsResponse = minerApiService.getSettings(minerPrefs.getApiKey().toString())
+                val settingsResponse =
+                    minerApiService.getSettings(minerPrefs.getApiKey().toString())
 
                 // 3. Actualizar el estado con el nuevo valor
                 _basicUiState.update {
-                    it.copy(currentTemperature = settingsResponse.miner.cooling.mode.param,
-                        isLoading = false)
+                    it.copy(
+                        currentTemperature = settingsResponse.miner.cooling.mode.param,
+                        isLoading = false
+                    )
                 }
             } catch (e: Exception) {
                 // Manejar error y volver a notificar que no está cargando
-                Log.e(TAG,"Error al consultar temperatura: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}")
+                Log.e(
+                    TAG,
+                    "Error al consultar temperatura: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+                )
                 //_basicUiState.update {
                 //    it.copy(
                 //        isLoading = false,
@@ -181,9 +193,48 @@ class MainViewModel @Inject constructor(
     }
 
 
+    suspend fun checkConnectivity(): Boolean {
+        var isConnected = false
+        viewModelScope.launch(Dispatchers.IO) {
+            _basicUiState.update { it.copy(isLoading = true, errorMsg = null) }
+            try {
+                val settingsResponse = minerApiService.getSettings(minerPrefs.getApiKey().toString())
+                _basicUiState.update {
+                    it.copy(
+                        currentTemperature = settingsResponse.miner.cooling.mode.param,
+                        isLoading = false
+                    )
+                }
+                _appSettingsUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = null
+                    )
+                }
+                isConnected = true
+            } catch (e: Exception) {
+                _appSettingsUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = e.message
+                    )
+                }
+                _basicUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = e.message
+                    )
+                }
+            }
+        }.join() // Wait for the coroutine to finish
+        return isConnected
+    }
+
     fun validateAndSave(onComplete: (Boolean) -> Unit) {
-        val isValid = true
-        onComplete(isValid)
+        viewModelScope.launch {
+            val isConnected = checkConnectivity()
+            onComplete(isConnected)
+        }
     }
 
     // Basic
@@ -225,7 +276,11 @@ class MainViewModel @Inject constructor(
             try {
                 context.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
-                Toast.makeText(context, "No application can handle this request. Please install a web browser.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "No application can handle this request. Please install a web browser.",
+                    Toast.LENGTH_LONG
+                ).show()
                 e.printStackTrace()
             }
         } else {
@@ -258,8 +313,8 @@ data class AdvancedUiState(
 )
 
 data class AppSettingsUiState(
-    var ip: String = "http://192.168.1.121",
-    var apiKey: String = "asdfasdfasdfasdfasdfasdfasdfabtc",
+    var ip: String = "",
+    var apiKey: String = "",
     var isDarkTheme: Boolean = false,
     var isLoading: Boolean = false,
     var errorMsg: String? = null

@@ -102,25 +102,25 @@ fun BasicHeaterScreen(
         //    Text("Refresh Temperature")
         //}
 
-        uiState.errorMsg?.let { error ->
-            AlertDialog(
-                onDismissRequest = {
-                    Log.d("BasicHeaterScreen", "Dismissing error dialog")
-                    viewModel.clearError()
-
-                },
-                title = { Text("Error") },
-                text = { Text(error) },
-                confirmButton = {
-                    TextButton(onClick = {
-                        // podrías limpiar el error en el ViewModel
-                        // _basicUiState.update { it.copy(errorMsg = null) }
-                    }) {
-                        Text("OK")
-                    }
-                }
-            )
-        }
+        //uiState.errorMsg?.let { error ->
+        //    AlertDialog(
+        //        onDismissRequest = {
+        //            Log.d("BasicHeaterScreen", "Dismissing error dialog")
+        //            viewModel.clearError()
+//
+        //        },
+        //        title = { Text("Error") },
+        //        text = { Text(error) },
+        //        confirmButton = {
+        //            TextButton(onClick = {
+        //                // podrías limpiar el error en el ViewModel
+        //                // _basicUiState.update { it.copy(errorMsg = null) }
+        //            }) {
+        //                Text("OK")
+        //            }
+        //        }
+        //    )
+        //}
 
 
 
@@ -198,17 +198,17 @@ fun BasicHeaterScreen(
     }
 
     // Manejo de snackbars
-    if (uiState.showSuccessMessage) {
-        // Ejemplo con SnackbarHost
-        SnackbarHost(
-            hostState = remember { SnackbarHostState() },
-            snackbar = {
-                Snackbar {
-                    Text("Temperature Updated!")
-                }
-            }
-        )
-    }
+    //if (uiState.showSuccessMessage) {
+    //    // Ejemplo con SnackbarHost
+    //    SnackbarHost(
+    //        hostState = remember { SnackbarHostState() },
+    //        snackbar = {
+    //            Snackbar {
+    //                Text("Temperature Updated!")
+    //            }
+    //        }
+    //    )
+    //}
 
     // Manejo de diálogos de error
     if (uiState.errorMsg != null) {
@@ -234,16 +234,4 @@ fun BasicHeaterScreen(
         )
     }
 
-    if (uiState.errorMsg != null) {
-        AlertDialog(
-            onDismissRequest = { viewModel.clearError() },
-            title = { Text("Error") },
-            text = { Text(uiState.errorMsg!!) },
-            confirmButton = {
-                TextButton(onClick = { viewModel.clearError() }) {
-                    Text("OK")
-                }
-            }
-        )
-    }
 }

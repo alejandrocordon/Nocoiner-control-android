@@ -46,8 +46,10 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
             contentDescription = "2c Image",
             modifier = Modifier.size(100.dp)
         )
-        Text(text = "Setup your Miner",
-            style = MaterialTheme.typography.titleLarge)
+        Text(
+            text = "Setup your Miner",
+            style = MaterialTheme.typography.titleLarge
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Ip: ${viewModel.getIp()}")
@@ -73,51 +75,48 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
 
         Button(
             onClick = {
-                viewModel.validateAndSave { isValid ->
-                    if (isValid) {
+                viewModel.validateAndSave { isConnected ->
+                    if (isConnected) {
                         viewModel.updateIp(ip)
                         viewModel.updateApiKey(apiKey)
                         Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
                         Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
                             .show()
                         navController.navigate(MainRoutes.Basic.route)
-
                     } else {
-                        Log.e("SettingsScreen", "Error saving IP and API Key")
-                        Toast.makeText(
-                            viewModel.context,
-                            "Error saving settings",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(viewModel.context, "Error ", Toast.LENGTH_SHORT)
+                            .show()
                     }
-                }
-            },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Save")
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                viewModel.validateAndSave { isValid ->
-                    if (isValid) {
-                        viewModel.updateIp("")
-                        viewModel.updateApiKey("")
-                        Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey cleared")
-                    } else {
-                        Log.e("SettingsScreen", "Error clearing IP and API Key")
-                    }
-                }
-            },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Clear data")
-        }
+            }
+    },
+    shape = RoundedCornerShape(8.dp),
+    colors = ButtonDefaults.buttonColors(NatioOrange40),
+    modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Save")
     }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Button(
+        onClick = {
+            viewModel.validateAndSave { isValid ->
+                if (isValid) {
+                    viewModel.updateIp("")
+                    viewModel.updateApiKey("")
+                    Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey cleared")
+                } else {
+                    Log.e("SettingsScreen", "Error clearing IP and API Key")
+                }
+            }
+        },
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(NatioOrange40),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Clear data")
+    }
+}
 }
