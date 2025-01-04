@@ -19,26 +19,31 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.Pool
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun AdvancedScreen(viewModel: MainViewModel) {
-    val advancedState = viewModel.advancedUiState
-
+    val advancedState by viewModel.advancedUiState.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -48,11 +53,32 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             .padding(16.dp)
     ) {
 
+        DisposableEffect(Unit) {
+            val job = viewModel.viewModelScope.launch {
+                while (true) {
+                    viewModel.getHashrate()
+                    delay(5000)
+                }
+            }
+            onDispose {
+                job.cancel()
+            }
+        }
         Image(
             painter = painterResource(id = R.drawable.dosc),
             contentDescription = "2c Image",
             modifier = Modifier.size(100.dp)
         )
+        Spacer(modifier = Modifier.height(16.dp))
+        if (advancedState.isLoading) {
+            CircularProgressIndicator()
+        } else {
+            Text(
+                //trunc to 2 decimals hashrate: summary.miner.average_hashrate
+                text = "Hashrate: ${String.format("%.2f", advancedState.hashrate.toDoubleOrNull() ?: 0.0)} TH/s",
+                style = MaterialTheme.typography.titleLarge
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Text("Mining Pools", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
