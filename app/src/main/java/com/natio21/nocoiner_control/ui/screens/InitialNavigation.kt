@@ -31,8 +31,6 @@ fun AppNavHost(
         }
 
         composable(Routes.Wizard.route) {
-            // WizardScreen puede tener su propia navegación interna,
-            // o múltiples pantallas en un Page-based approach. Ejemplo:
             WizardScreen(
                 onWizardComplete = {
                     navController.navigate(Routes.Main.route) {

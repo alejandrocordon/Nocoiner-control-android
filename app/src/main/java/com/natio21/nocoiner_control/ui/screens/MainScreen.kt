@@ -22,9 +22,7 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
 
-    // Al pulsar atrás, mostrar un diálogo
     BackHandler {
-        // Muestras un diálogo pidiendo confirmación
         onExitRequested()
     }
 
@@ -46,7 +44,7 @@ fun MainScreen(
                 AdvancedScreen(viewModel)
             }
             composable(MainRoutes.Settings.route) {
-                SettingsScreen(viewModel)
+                SettingsScreen(viewModel, navController)
             }
         }
     }

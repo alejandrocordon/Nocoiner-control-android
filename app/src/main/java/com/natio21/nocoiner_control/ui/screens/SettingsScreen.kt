@@ -1,6 +1,7 @@
 package com.natio21.nocoiner_control.ui.screens;
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,12 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
 
 @Composable
-fun SettingsScreen(viewModel: MainViewModel) {
+fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
     val ip by viewModel.ip
     val apiKey by viewModel.apiKey
 
@@ -76,8 +78,17 @@ fun SettingsScreen(viewModel: MainViewModel) {
                         viewModel.updateIp(ip)
                         viewModel.updateApiKey(apiKey)
                         Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
+                        Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
+                            .show()
+                        navController.navigate(MainRoutes.Basic.route)
+
                     } else {
                         Log.e("SettingsScreen", "Error saving IP and API Key")
+                        Toast.makeText(
+                            viewModel.context,
+                            "Error saving settings",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             },
