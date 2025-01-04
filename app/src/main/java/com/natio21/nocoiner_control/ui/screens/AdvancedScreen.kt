@@ -74,7 +74,8 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             CircularProgressIndicator()
         } else {
             Text(
-                text = "Current temperature: ${advancedState.hashrate} TH/s",
+                //trunc to 2 decimals hashrate: summary.miner.average_hashrate
+                text = "Hashrate: ${String.format("%.2f", advancedState.hashrate.toDoubleOrNull() ?: 0.0)} TH/s",
                 style = MaterialTheme.typography.titleLarge
             )
         }

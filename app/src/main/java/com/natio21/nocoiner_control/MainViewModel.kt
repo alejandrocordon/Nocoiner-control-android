@@ -130,13 +130,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    //get hashrate in advancedUiState
     fun getHashrate() {
         viewModelScope.launch(Dispatchers.IO) {
             _advancedUiState.update { it.copy(isLoading = true) }
             try {
                 val summary = minerApiService.getSummary(minerPrefs.getApiKey().toString())
-                val hashrate = summary.miner.minerStatus?.minerState
+                val hashrate = summary.miner.average_hashrate
                 _advancedUiState.update {
                     it.copy(
                         hashrate = hashrate.toString(),
