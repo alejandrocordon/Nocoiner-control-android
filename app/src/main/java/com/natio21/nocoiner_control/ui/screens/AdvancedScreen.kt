@@ -56,7 +56,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         DisposableEffect(Unit) {
             val job = viewModel.viewModelScope.launch {
                 while (true) {
-                    viewModel.getHashrate()
+                    viewModel.getSummary()
                     delay(5000)
                 }
             }
@@ -75,12 +75,70 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         } else {
             Text(
                 //trunc to 2 decimals hashrate: summary.miner.average_hashrate
-                text = "Hashrate: ${String.format("%.2f", advancedState.hashrate.toDoubleOrNull() ?: 0.0)} TH/s",
+                text = "Hashrate: ${
+                    String.format(
+                        "%.2f",
+                        advancedState.summary?.miner?.hr_realtime
+                    )
+                } TH/s",
                 style = MaterialTheme.typography.titleLarge
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Mining Pools", style = MaterialTheme.typography.titleLarge)
+        Text(
+            "- ${advancedState.summary?.miner?.miner_status?.miner_state}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "- ${advancedState.summary?.miner?.miner_status?.miner_state_time}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "- ${advancedState.summary?.miner?.hr_realtime}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "- ${advancedState.summary?.miner?.hr_average}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "- ${advancedState.summary?.miner?.pcb_temp?.min}-${advancedState.summary?.miner?.pcb_temp?.max}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "- ${advancedState.summary?.miner?.chip_temp?.min}-${advancedState.summary?.miner?.chip_temp?.max}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "- ${advancedState.summary?.miner?.power_consumption} - ${advancedState.summary?.miner?.power_usage} - ${advancedState.summary?.miner?.power_efficiency}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (advancedState.summary?.miner?.pools != null) {
+            for (pool in advancedState.summary?.miner?.pools!!) {
+                Text(
+                    "- ${pool.url} - ${pool.pool_type} - ${pool.status}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        if (advancedState.summary?.miner?.cooling?.fans != null) {
+            for (fan in advancedState.summary?.miner?.cooling?.fans!!) {
+                Text(
+                    "- ${fan.id} - ${fan.rpm} - ${fan.rpm}/${fan.maxRpm}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn {
             items(advancedState.pools) { pool ->
@@ -92,8 +150,10 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            viewModel.createNewPool() },
+        Button(
+            onClick = {
+                viewModel.createNewPool()
+            },
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(NatioOrange40),
             modifier = Modifier.fillMaxWidth()
@@ -103,8 +163,10 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(32.dp))
         //Text("Hashrate: ${advancedState.hashrate}")
 
-        Button(onClick = {
-            viewModel.openMinerWeb()},
+        Button(
+            onClick = {
+                viewModel.openMinerWeb()
+            },
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(NatioOrange40),
             modifier = Modifier.fillMaxWidth()

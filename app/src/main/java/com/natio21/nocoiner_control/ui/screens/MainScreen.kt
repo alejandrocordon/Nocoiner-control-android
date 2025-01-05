@@ -41,7 +41,6 @@ fun MainScreen(
             }
             composable(MainRoutes.Advanced.route) {
                 AdvancedScreen(viewModel)
-                AdvancedScreen(viewModel)
             }
             composable(MainRoutes.Settings.route) {
                 SettingsScreen(viewModel, navController)

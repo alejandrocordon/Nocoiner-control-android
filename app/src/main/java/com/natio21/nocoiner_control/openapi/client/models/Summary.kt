@@ -46,6 +46,24 @@ data class TemperatureRange(
     val max: Int
 )
 
+/*"pools": [
+{
+    "id": 0,
+    "url": "eu1.sbicrypto.com:3333",
+    "pool_type": "UserPool",
+    "user": "*****",
+    "status": "active",
+    "asic_boost": true,
+    "diff": "65.5K",
+    "accepted": 79747,
+    "rejected": 24,
+    "stale": 0,
+    "ls_diff": 65536,
+    "ls_time": "0:00:28",
+    "diffa": 5213716480,
+    "ping": 18
+    */
+
 @JsonClass(generateAdapter = true)
 data class SummaryPool(
     val id: Int,

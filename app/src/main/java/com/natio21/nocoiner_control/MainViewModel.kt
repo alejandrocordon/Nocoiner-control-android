@@ -15,6 +15,8 @@ import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
+import com.natio21.nocoiner_control.openapi.client.models.Summary
+import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -136,6 +138,28 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun getSummary() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _advancedUiState.update { it.copy(isLoading = true) }
+            try {
+                val summary = minerApiService.getSummary(minerPrefs.getApiKey().toString())
+                _advancedUiState.update {
+                    it.copy(
+                        summary = summary,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _advancedUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = "Error al consultar hashrate: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+                    )
+                }
+            }
+        }
+    }
+
     fun getHashrate() {
         viewModelScope.launch(Dispatchers.IO) {
             _advancedUiState.update { it.copy(isLoading = true) }
@@ -193,7 +217,7 @@ class MainViewModel @Inject constructor(
     }
 
 
-    suspend fun checkConnectivity(): Boolean {
+    private suspend fun checkConnectivity(): Boolean {
         var isConnected = false
         viewModelScope.launch(Dispatchers.IO) {
             _basicUiState.update { it.copy(isLoading = true, errorMsg = null) }
@@ -309,7 +333,8 @@ data class AdvancedUiState(
     val pools: List<Pool> = emptyList(),
     val hashrate: String = "", // Ej: “56 MH/s”
     var isLoading: Boolean = false,
-    var errorMsg: String? = null
+    var errorMsg: String? = null,
+    var summary: SummaryResponse? = null
 )
 
 data class AppSettingsUiState(
