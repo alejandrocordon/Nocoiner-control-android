@@ -71,20 +71,29 @@ fun AdvancedScreen(viewModel: MainViewModel) {
 
 
         // Miner
-        val minerTitles: List<String> = listOf("miner","status")
+        val minerTitles: List<String> = listOf("miner", "status")
         val minerInfo: List<String> = listOf(
             "${advancedState.summary?.miner?.miner_type}",
             "${advancedState.summary?.miner?.miner_status?.miner_state}",
 
-        )
+            )
         val minerMatrix = listOf(minerTitles, minerInfo)
         item { MatrixDashboardCard(title = "Miner", dataMatrix = minerMatrix) }
 
         // Hashrate
         val hashrateInfo: List<String> = listOf(
-            String.format("%.2f", advancedState.summary?.miner?.hr_average?.div(1000) ?: 0.0) + "TH/s",
-            String.format("%.2f", advancedState.summary?.miner?.hr_nominal?.div(1000) ?: 0.0) + "TH/s",
-            String.format("%.2f", advancedState.summary?.miner?.hr_realtime?.div(1000) ?: 0.0) + "TH/s",
+            String.format(
+                "%.2f",
+                advancedState.summary?.miner?.hr_average?.div(1000) ?: 0.0
+            ) + "TH/s",
+            String.format(
+                "%.2f",
+                advancedState.summary?.miner?.hr_nominal?.div(1000) ?: 0.0
+            ) + "TH/s",
+            String.format(
+                "%.2f",
+                advancedState.summary?.miner?.hr_realtime?.div(1000) ?: 0.0
+            ) + "TH/s",
             "${advancedState.summary?.miner?.found_blocks}"
         )
         val hashrateInfoDeprecated: List<String> = listOf(
@@ -92,12 +101,17 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             String.format("%.2f", advancedState.summary?.miner?.instant_hashrate ?: 0.0) + "TH/s",
             "${advancedState.summary?.miner?.found_blocks}"
         )
-        val hasrateTitles: List<String> = listOf("average","realtime","nominal", "found blocks")
+        val hasrateTitles: List<String> = listOf("average", "realtime", "nominal", "found blocks")
         val hasrateTitlesDeprecated: List<String> = listOf("average", "realtime", "found blocks")
         val hashrateMatix = listOf(hasrateTitles, hashrateInfo)
         val hashrateMatixDeprecated = listOf(hashrateInfoDeprecated, hasrateTitlesDeprecated)
-        item { MatrixDashboardCard(title = "Hashrate", dataMatrix= hashrateMatix) }
-        item { MatrixDashboardCard(title = "Hashrate (Deprecated)", dataMatrix= hashrateMatixDeprecated) }
+        item { MatrixDashboardCard(title = "Hashrate", dataMatrix = hashrateMatix) }
+        item {
+            MatrixDashboardCard(
+                title = "Hashrate (Deprecated)",
+                dataMatrix = hashrateMatixDeprecated
+            )
+        }
 
         // Temperature MatrixDashboardCard
         val temperatureInfo: List<String> = listOf(
@@ -105,7 +119,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             "${advancedState.summary?.miner?.chip_temp?.min}ºC-${advancedState.summary?.miner?.chip_temp?.max}ºC"
         )
         val temperatureTitles: List<String> = listOf("PCB Temp", "Chip Temp")
-        val temperatureMatrix = listOf(temperatureTitles, temperatureInfo )
+        val temperatureMatrix = listOf(temperatureTitles, temperatureInfo)
         item { MatrixDashboardCard(title = "Temperature", dataMatrix = temperatureMatrix) }
 
         // Power MatrixDashboardCard
@@ -118,27 +132,26 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         item { MatrixDashboardCard(title = "Power", dataMatrix = powerMatrix) }
 
 
-
         // Pools MatrixDashboardCard
-        if (advancedState.summary?.miner?.pools != null) {
-            items(advancedState.summary?.miner?.pools!!) { pool ->
-                DashboardCard(title = "Pool ${pool.id}", content = "${pool.url} - ${pool.pool_type} - ${pool.status}")
-            }
-        }
+        val poolsTitles: List<String> = listOf("Pool", "Type", "Status")
+        val poolsInfo: List<List<String>> = advancedState.summary?.miner?.pools?.map { pool ->
+            listOf(pool.url, pool.pool_type, pool.status)
+        } ?: emptyList()
+        val poolMatrix = listOf(poolsTitles) + poolsInfo
+        item { MatrixDashboardCard(title = "Pools", dataMatrix = poolMatrix) }
+
+
+        // Fans MatrixDashboardCard
+        val fansInfo: List<List<String>> =
+            listOf(listOf("${advancedState.summary?.miner?.cooling?.fan_num} Fans","Duty", "${advancedState.summary?.miner?.cooling?.fan_duty}%")) + listOf(
+                listOf("id","RPM", "Status")
+            ) + (advancedState.summary?.miner?.cooling?.fans?.map { fan ->
+                listOf(fan.id.toString(),fan.rpm.toString(), fan.status.toString())
+            } ?: emptyList())
+        item { MatrixDashboardCard(title = "Fans", dataMatrix = fansInfo) }
 
 
 
-
-        if (advancedState.summary?.miner?.pools != null) {
-            items(advancedState.summary?.miner?.pools!!) { pool ->
-                DashboardCard(title = "Pool ${pool.id}", content = "${pool.url} - ${pool.pool_type} - ${pool.status}")
-            }
-        }
-        if (advancedState.summary?.miner?.cooling?.fans != null) {
-            items(advancedState.summary?.miner?.cooling?.fans!!) { fan ->
-                DashboardCard(title = "Fan ${fan.id}", content = "${fan.rpm}/${fan.maxRpm} RPM - status ${fan.status}")
-            }
-        }
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -174,7 +187,11 @@ fun DashboardCard(title: String, content: String) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = content, style = MaterialTheme.typography.bodyMedium)
         }
@@ -193,7 +210,11 @@ fun MatrixDashboardCard(title: String, dataMatrix: List<List<String>>) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.height(8.dp))
             val longestRowSize = dataMatrix.maxOfOrNull { it.size } ?: 0
             dataMatrix.forEach { rowItems ->
@@ -205,7 +226,9 @@ fun MatrixDashboardCard(title: String, dataMatrix: List<List<String>>) {
                         Text(
                             text = content,
                             style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f).wrapContentWidth(Alignment.Start)
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentWidth(Alignment.Start)
                         )
                     }
                     repeat(longestRowSize - rowItems.size) {
