@@ -173,6 +173,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             }
         }
     }
+    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable
