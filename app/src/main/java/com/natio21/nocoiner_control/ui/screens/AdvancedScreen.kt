@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -44,6 +46,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdvancedScreen(viewModel: MainViewModel) {
     val advancedState by viewModel.advancedUiState.collectAsState()
+    val scrollState = rememberScrollState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,6 +54,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .verticalScroll(scrollState)
     ) {
 
         DisposableEffect(Unit) {
@@ -70,6 +74,16 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             modifier = Modifier.size(100.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "Type: ${advancedState.summary?.miner?.miner_type}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "Status: ${advancedState.summary?.miner?.miner_status?.miner_state}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         if (advancedState.isLoading) {
             CircularProgressIndicator()
         } else {
@@ -78,7 +92,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
                 text = "Hashrate: ${
                     String.format(
                         "%.2f",
-                        advancedState.summary?.miner?.hr_realtime
+                        advancedState.summary?.miner?.average_hashrate ?: 0.0
                     )
                 } TH/s",
                 style = MaterialTheme.typography.titleLarge
@@ -86,69 +100,74 @@ fun AdvancedScreen(viewModel: MainViewModel) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "- ${advancedState.summary?.miner?.miner_status?.miner_state}",
+            "Average Hashrate: ${advancedState.summary?.miner?.hr_average}",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "- ${advancedState.summary?.miner?.miner_status?.miner_state_time}",
+            "Nominal Hashrate: ${advancedState.summary?.miner?.hr_nominal}",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "- ${advancedState.summary?.miner?.hr_realtime}",
+            "Found Blocks: ${advancedState.summary?.miner?.found_blocks}",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "- ${advancedState.summary?.miner?.hr_average}",
+            "PCB temp: ${advancedState.summary?.miner?.pcb_temp?.min}ºC-${advancedState.summary?.miner?.pcb_temp?.max}ºC",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "- ${advancedState.summary?.miner?.pcb_temp?.min}-${advancedState.summary?.miner?.pcb_temp?.max}",
+            "Chip temp: ${advancedState.summary?.miner?.chip_temp?.min}ºC-${advancedState.summary?.miner?.chip_temp?.max}ºC",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "- ${advancedState.summary?.miner?.chip_temp?.min}-${advancedState.summary?.miner?.chip_temp?.max}",
+            "Power: ${advancedState.summary?.miner?.power_consumption}W - efficiency ${advancedState.summary?.miner?.power_efficiency}%",
             style = MaterialTheme.typography.bodyMedium
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "- ${advancedState.summary?.miner?.power_consumption} - ${advancedState.summary?.miner?.power_usage} - ${advancedState.summary?.miner?.power_efficiency}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
         if (advancedState.summary?.miner?.pools != null) {
             for (pool in advancedState.summary?.miner?.pools!!) {
                 Text(
-                    "- ${pool.url} - ${pool.pool_type} - ${pool.status}",
+                    "Pool ${pool.id}: ${pool.url} - ${pool.pool_type} - ${pool.status}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
-
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "Fan duty: ${advancedState.summary?.miner?.cooling?.fan_duty}% - fan count: ${advancedState.summary?.miner?.cooling?.fan_num}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         if (advancedState.summary?.miner?.cooling?.fans != null) {
             for (fan in advancedState.summary?.miner?.cooling?.fans!!) {
                 Text(
-                    "- ${fan.id} - ${fan.rpm} - ${fan.rpm}/${fan.maxRpm}",
+                    "Fan ${fan.id} : ${fan.rpm}/${fan.maxRpm} RPM - status ${fan.status}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            "Best share: ${advancedState.summary?.miner?.best_share}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
 
         Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn {
-            items(advancedState.pools) { pool ->
-                PoolItem(
-                    pool = pool,
-                    onEditClick = { viewModel.editPool(pool) },
-                    onDeleteClick = { viewModel.deletePool(pool) }
-                )
-            }
-        }
+        //LazyColumn {
+        //    items(advancedState.pools) { pool ->
+        //        PoolItem(
+        //            pool = pool,
+        //            onEditClick = { viewModel.editPool(pool) },
+        //            onDeleteClick = { viewModel.deletePool(pool) }
+        //        )
+        //    }
+        //}
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
