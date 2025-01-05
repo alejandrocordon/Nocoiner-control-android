@@ -21,6 +21,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.natio21.nocoiner_control.MainViewModel
@@ -43,7 +46,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@Composable
+/*@Composable
 fun AdvancedScreen(viewModel: MainViewModel) {
     val advancedState by viewModel.advancedUiState.collectAsState()
     val scrollState = rememberScrollState()
@@ -204,6 +207,123 @@ fun PoolItem(pool: Pool, onEditClick: () -> Unit, onDeleteClick: () -> Unit) {
         }
         IconButton(onClick = onDeleteClick) {
             Icon(Icons.Default.Delete, contentDescription = "Delete")
+        }
+    }
+}
+
+@Composable
+fun DashboardCard(title: String, content: String) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = content, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+*/
+
+@Composable
+fun AdvancedScreen(viewModel: MainViewModel) {
+    val advancedState by viewModel.advancedUiState.collectAsState()
+
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        item {
+            DisposableEffect(Unit) {
+                val job = viewModel.viewModelScope.launch {
+                    while (true) {
+                        viewModel.getSummary()
+                        delay(5000)
+                    }
+                }
+                onDispose {
+                    job.cancel()
+                }
+            }
+            Image(
+                painter = painterResource(id = R.drawable.dosc),
+                contentDescription = "2c Image",
+                modifier = Modifier.size(100.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item { DashboardCard(title = "Type", content = advancedState.summary?.miner?.miner_type ?: "N/A") }
+        item {
+            if (advancedState.isLoading) {
+                CircularProgressIndicator()
+            } else {
+                DashboardCard(title = "Hashrate", content = String.format("%.2f TH/s", advancedState.summary?.miner?.average_hashrate ?: 0.0))
+            }
+        }
+        item { DashboardCard(title = "Status", content = advancedState.summary?.miner?.miner_status?.miner_state ?: "N/A") }
+        item { DashboardCard(title = "Average Hashrate", content = (advancedState.summary?.miner?.hr_average ?: "N/A").toString()) }
+        item { DashboardCard(title = "Nominal Hashrate", content = (advancedState.summary?.miner?.hr_nominal ?: "N/A").toString()) }
+        item { DashboardCard(title = "Found Blocks", content = (advancedState.summary?.miner?.found_blocks ?: "N/A").toString()) }
+        item { DashboardCard(title = "PCB Temp", content = "${advancedState.summary?.miner?.pcb_temp?.min}ºC-${advancedState.summary?.miner?.pcb_temp?.max}ºC") }
+        item { DashboardCard(title = "Chip Temp", content = "${advancedState.summary?.miner?.chip_temp?.min}ºC-${advancedState.summary?.miner?.chip_temp?.max}ºC") }
+        item { DashboardCard(title = "Power", content = "${advancedState.summary?.miner?.power_consumption}W - efficiency ${advancedState.summary?.miner?.power_efficiency}%") }
+        if (advancedState.summary?.miner?.pools != null) {
+            items(advancedState.summary?.miner?.pools!!) { pool ->
+                DashboardCard(title = "Pool ${pool.id}", content = "${pool.url} - ${pool.pool_type} - ${pool.status}")
+            }
+        }
+        if (advancedState.summary?.miner?.cooling?.fans != null) {
+            items(advancedState.summary?.miner?.cooling?.fans!!) { fan ->
+                DashboardCard(title = "Fan ${fan.id}", content = "${fan.rpm}/${fan.maxRpm} RPM - status ${fan.status}")
+            }
+        }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { viewModel.createNewPool() },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add Pool")
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = { viewModel.openMinerWeb() },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Go to Miner Web")
+            }
+        }
+    }
+}
+
+@Composable
+fun DashboardCard(title: String, content: String) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(text = title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = content, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
