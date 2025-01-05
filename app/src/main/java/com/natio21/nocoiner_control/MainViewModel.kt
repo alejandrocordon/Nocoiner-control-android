@@ -254,6 +254,10 @@ class MainViewModel @Inject constructor(
         return isConnected
     }
 
+    fun getAppVersion(): String {
+        return context.packageManager.getPackageInfo(context.packageName, 0).versionName.toString()
+    }
+
     fun validateAndSave(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
             val isConnected = checkConnectivity()

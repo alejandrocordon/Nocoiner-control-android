@@ -54,9 +54,9 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Ip: ${viewModel.getIp()}")
+        Text(text = "Cuurent Ip: ${viewModel.getIp()}")
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "ApiKey: ${viewModel.getApiKey()}")
+        Text(text = "Current ApiKey: ${viewModel.getApiKey()}")
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -73,7 +73,7 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
             placeholder = { Text("API Key") },
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Button(
             onClick = {
@@ -122,5 +122,10 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         ) {
             Text("Clear data")
         }
+
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(text = "App version: ${viewModel.getAppVersion()}", modifier = Modifier.align(Alignment.End))
+        Spacer(modifier = Modifier.height(16.dp))
+
     }
 }
