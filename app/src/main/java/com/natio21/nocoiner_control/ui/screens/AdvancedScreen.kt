@@ -1,6 +1,5 @@
 package com.natio21.nocoiner_control.ui.screens;
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,19 +10,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,10 +28,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import com.natio21.nocoiner_control.MainViewModel
-import com.natio21.nocoiner_control.Pool
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
 import kotlinx.coroutines.delay
@@ -46,164 +41,203 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdvancedScreen(viewModel: MainViewModel) {
     val advancedState by viewModel.advancedUiState.collectAsState()
-    val scrollState = rememberScrollState()
 
-    Column(
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(scrollState)
     ) {
-
-        DisposableEffect(Unit) {
-            val job = viewModel.viewModelScope.launch {
-                while (true) {
-                    viewModel.getSummary()
-                    delay(5000)
+        item {
+            DisposableEffect(Unit) {
+                val job = viewModel.viewModelScope.launch {
+                    while (true) {
+                        viewModel.getSummary()
+                        delay(5000)
+                    }
+                }
+                onDispose {
+                    job.cancel()
                 }
             }
-            onDispose {
-                job.cancel()
-            }
+            Image(
+                painter = painterResource(id = R.drawable.dosc),
+                contentDescription = "2c Image",
+                modifier = Modifier.size(100.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
-        Image(
-            painter = painterResource(id = R.drawable.dosc),
-            contentDescription = "2c Image",
-            modifier = Modifier.size(100.dp)
+
+
+        // Miner
+        val minerTitles: List<String> = listOf("miner", "status")
+        val minerInfo: List<String> = listOf(
+            "${advancedState.summary?.miner?.miner_type}",
+            "${advancedState.summary?.miner?.miner_status?.miner_state}",
+
+            )
+        val minerMatrix = listOf(minerTitles, minerInfo)
+        item { MatrixDashboardCard(title = "Miner", dataMatrix = minerMatrix) }
+
+        // Hashrate
+        val hashrateInfo: List<String> = listOf(
+            String.format(
+                "%.2f",
+                advancedState.summary?.miner?.hr_average?.div(1000) ?: 0.0
+            ) + "TH/s",
+            String.format(
+                "%.2f",
+                advancedState.summary?.miner?.hr_nominal?.div(1000) ?: 0.0
+            ) + "TH/s",
+            String.format(
+                "%.2f",
+                advancedState.summary?.miner?.hr_realtime?.div(1000) ?: 0.0
+            ) + "TH/s",
+            "${advancedState.summary?.miner?.found_blocks}"
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Type: ${advancedState.summary?.miner?.miner_type}",
-            style = MaterialTheme.typography.bodyMedium
+        val hashrateInfoDeprecated: List<String> = listOf(
+            String.format("%.2f", advancedState.summary?.miner?.average_hashrate ?: 0.0) + "TH/s",
+            String.format("%.2f", advancedState.summary?.miner?.instant_hashrate ?: 0.0) + "TH/s",
+            "${advancedState.summary?.miner?.found_blocks}"
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Status: ${advancedState.summary?.miner?.miner_status?.miner_state}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        if (advancedState.isLoading) {
-            CircularProgressIndicator()
-        } else {
-            Text(
-                //trunc to 2 decimals hashrate: summary.miner.average_hashrate
-                text = "Hashrate: ${
-                    String.format(
-                        "%.2f",
-                        advancedState.summary?.miner?.average_hashrate ?: 0.0
-                    )
-                } TH/s",
-                style = MaterialTheme.typography.titleLarge
+        val hasrateTitles: List<String> = listOf("average", "realtime", "nominal", "found blocks")
+        val hasrateTitlesDeprecated: List<String> = listOf("average", "realtime", "found blocks")
+        val hashrateMatix = listOf(hasrateTitles, hashrateInfo)
+        val hashrateMatixDeprecated = listOf(hashrateInfoDeprecated, hasrateTitlesDeprecated)
+        item { MatrixDashboardCard(title = "Hashrate", dataMatrix = hashrateMatix) }
+        item {
+            MatrixDashboardCard(
+                title = "Hashrate (Deprecated)",
+                dataMatrix = hashrateMatixDeprecated
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Average Hashrate: ${advancedState.summary?.miner?.hr_average}",
-            style = MaterialTheme.typography.bodyMedium
+
+        // Temperature MatrixDashboardCard
+        val temperatureInfo: List<String> = listOf(
+            "${advancedState.summary?.miner?.pcb_temp?.min}ºC-${advancedState.summary?.miner?.pcb_temp?.max}ºC",
+            "${advancedState.summary?.miner?.chip_temp?.min}ºC-${advancedState.summary?.miner?.chip_temp?.max}ºC"
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Nominal Hashrate: ${advancedState.summary?.miner?.hr_nominal}",
-            style = MaterialTheme.typography.bodyMedium
+        val temperatureTitles: List<String> = listOf("PCB Temp", "Chip Temp")
+        val temperatureMatrix = listOf(temperatureTitles, temperatureInfo)
+        item { MatrixDashboardCard(title = "Temperature", dataMatrix = temperatureMatrix) }
+
+        // Power MatrixDashboardCard
+        val powerInfo: List<String> = listOf(
+            "${advancedState.summary?.miner?.power_consumption}W",
+            "${advancedState.summary?.miner?.power_efficiency}%"
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Found Blocks: ${advancedState.summary?.miner?.found_blocks}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "PCB temp: ${advancedState.summary?.miner?.pcb_temp?.min}ºC-${advancedState.summary?.miner?.pcb_temp?.max}ºC",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Chip temp: ${advancedState.summary?.miner?.chip_temp?.min}ºC-${advancedState.summary?.miner?.chip_temp?.max}ºC",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Power: ${advancedState.summary?.miner?.power_consumption}W - efficiency ${advancedState.summary?.miner?.power_efficiency}%",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        if (advancedState.summary?.miner?.pools != null) {
-            for (pool in advancedState.summary?.miner?.pools!!) {
-                Text(
-                    "Pool ${pool.id}: ${pool.url} - ${pool.pool_type} - ${pool.status}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+        val powerTitles: List<String> = listOf("Power Consumption", "Efficiency")
+        val powerMatrix = listOf(powerTitles, powerInfo)
+        item { MatrixDashboardCard(title = "Power", dataMatrix = powerMatrix) }
+
+
+        // Pools MatrixDashboardCard
+        val poolsTitles: List<String> = listOf("Pool", "Type", "Status")
+        val poolsInfo: List<List<String>> = advancedState.summary?.miner?.pools?.map { pool ->
+            listOf(pool.url, pool.pool_type, pool.status)
+        } ?: emptyList()
+        val poolMatrix = listOf(poolsTitles) + poolsInfo
+        item { MatrixDashboardCard(title = "Pools", dataMatrix = poolMatrix) }
+
+
+        // Fans MatrixDashboardCard
+        val fansInfo: List<List<String>> =
+            listOf(listOf("${advancedState.summary?.miner?.cooling?.fan_num} Fans","Duty", "${advancedState.summary?.miner?.cooling?.fan_duty}%")) + listOf(
+                listOf("id","RPM", "Status")
+            ) + (advancedState.summary?.miner?.cooling?.fans?.map { fan ->
+                listOf(fan.id.toString(),fan.rpm.toString(), fan.status.toString())
+            } ?: emptyList())
+        item { MatrixDashboardCard(title = "Fans", dataMatrix = fansInfo) }
+
+
+
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = { viewModel.createNewPool() },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Add Pool")
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = { viewModel.openMinerWeb() },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Go to Miner Web")
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Fan duty: ${advancedState.summary?.miner?.cooling?.fan_duty}% - fan count: ${advancedState.summary?.miner?.cooling?.fan_num}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        if (advancedState.summary?.miner?.cooling?.fans != null) {
-            for (fan in advancedState.summary?.miner?.cooling?.fans!!) {
-                Text(
-                    "Fan ${fan.id} : ${fan.rpm}/${fan.maxRpm} RPM - status ${fan.status}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            "Best share: ${advancedState.summary?.miner?.best_share}",
-            style = MaterialTheme.typography.bodyMedium
-        )
+    }
+    Spacer(modifier = Modifier.height(16.dp))
+}
 
-
-        Spacer(modifier = Modifier.height(16.dp))
-        //LazyColumn {
-        //    items(advancedState.pools) { pool ->
-        //        PoolItem(
-        //            pool = pool,
-        //            onEditClick = { viewModel.editPool(pool) },
-        //            onDeleteClick = { viewModel.deletePool(pool) }
-        //        )
-        //    }
-        //}
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                viewModel.createNewPool()
-            },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
-            modifier = Modifier.fillMaxWidth()
+@Composable
+fun DashboardCard(title: String, content: String) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
         ) {
-            Text("Add Pool")
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        //Text("Hashrate: ${advancedState.hashrate}")
-
-        Button(
-            onClick = {
-                viewModel.openMinerWeb()
-            },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Go to Miner Web")
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = content, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
 
 @Composable
-fun PoolItem(pool: Pool, onEditClick: () -> Unit, onDeleteClick: () -> Unit) {
-    Row(Modifier.fillMaxWidth()) {
-        Text("URL: ${pool.url} Priority: ${pool.priority}")
-        IconButton(onClick = onEditClick) {
-            Icon(Icons.Default.Edit, contentDescription = "Edit")
-        }
-        IconButton(onClick = onDeleteClick) {
-            Icon(Icons.Default.Delete, contentDescription = "Delete")
+fun MatrixDashboardCard(title: String, dataMatrix: List<List<String>>) {
+    Card(
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            val longestRowSize = dataMatrix.maxOfOrNull { it.size } ?: 0
+            dataMatrix.forEach { rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    rowItems.forEach { content ->
+                        Text(
+                            text = content,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentWidth(Alignment.Start)
+                        )
+                    }
+                    repeat(longestRowSize - rowItems.size) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
         }
     }
 }
