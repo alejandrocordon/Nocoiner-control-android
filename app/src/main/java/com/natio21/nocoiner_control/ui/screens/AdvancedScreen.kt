@@ -1,6 +1,8 @@
 package com.natio21.nocoiner_control.ui.screens;
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +36,7 @@ import androidx.lifecycle.viewModelScope
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,138 +45,156 @@ import kotlinx.coroutines.launch
 fun AdvancedScreen(viewModel: MainViewModel) {
     val advancedState by viewModel.advancedUiState.collectAsState()
 
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        item {
-            DisposableEffect(Unit) {
-                val job = viewModel.viewModelScope.launch {
-                    while (true) {
-                        viewModel.getSummary()
-                        delay(5000)
+    NocoinercontrolTheme {
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+        ) {
+            item {
+                DisposableEffect(Unit) {
+                    val job = viewModel.viewModelScope.launch {
+                        while (true) {
+                            viewModel.getSummary()
+                            delay(5000)
+                        }
+                    }
+                    onDispose {
+                        job.cancel()
                     }
                 }
-                onDispose {
-                    job.cancel()
+                Image(
+                    painter = painterResource(id = R.drawable.dosc),
+                    contentDescription = "2c Image",
+                    modifier = Modifier.size(100.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+
+            // Miner
+            val minerTitles: List<String> = listOf("miner", "status")
+            val minerInfo: List<String> = listOf(
+                "${advancedState.summary?.miner?.miner_type}",
+                "${advancedState.summary?.miner?.miner_status?.miner_state}",
+
+                )
+            val minerMatrix = listOf(minerTitles, minerInfo)
+            item { MatrixDashboardCard(title = "Miner", dataMatrix = minerMatrix) }
+
+            // Hashrate
+            val hashrateInfo: List<String> = listOf(
+                String.format(
+                    "%.2f",
+                    advancedState.summary?.miner?.hr_average?.div(1000) ?: 0.0
+                ) + "TH/s",
+                String.format(
+                    "%.2f",
+                    advancedState.summary?.miner?.hr_nominal?.div(1000) ?: 0.0
+                ) + "TH/s",
+                String.format(
+                    "%.2f",
+                    advancedState.summary?.miner?.hr_realtime?.div(1000) ?: 0.0
+                ) + "TH/s",
+                "${advancedState.summary?.miner?.found_blocks}"
+            )
+            val hashrateInfoDeprecated: List<String> = listOf(
+                String.format(
+                    "%.2f",
+                    advancedState.summary?.miner?.average_hashrate ?: 0.0
+                ) + "TH/s",
+                String.format(
+                    "%.2f",
+                    advancedState.summary?.miner?.instant_hashrate ?: 0.0
+                ) + "TH/s",
+                "${advancedState.summary?.miner?.found_blocks}"
+            )
+            val hasrateTitles: List<String> =
+                listOf("average", "realtime", "nominal", "found blocks")
+            val hasrateTitlesDeprecated: List<String> =
+                listOf("average", "realtime", "found blocks")
+            val hashrateMatix = listOf(hasrateTitles, hashrateInfo)
+            val hashrateMatixDeprecated = listOf(hashrateInfoDeprecated, hasrateTitlesDeprecated)
+            item { MatrixDashboardCard(title = "Hashrate", dataMatrix = hashrateMatix) }
+            item {
+                MatrixDashboardCard(
+                    title = "Hashrate (Deprecated)",
+                    dataMatrix = hashrateMatixDeprecated
+                )
+            }
+
+            // Temperature MatrixDashboardCard
+            val temperatureInfo: List<String> = listOf(
+                "${advancedState.summary?.miner?.pcb_temp?.min}ºC-${advancedState.summary?.miner?.pcb_temp?.max}ºC",
+                "${advancedState.summary?.miner?.chip_temp?.min}ºC-${advancedState.summary?.miner?.chip_temp?.max}ºC"
+            )
+            val temperatureTitles: List<String> = listOf("PCB Temp", "Chip Temp")
+            val temperatureMatrix = listOf(temperatureTitles, temperatureInfo)
+            item { MatrixDashboardCard(title = "Temperature", dataMatrix = temperatureMatrix) }
+
+            // Power MatrixDashboardCard
+            val powerInfo: List<String> = listOf(
+                "${advancedState.summary?.miner?.power_consumption}W",
+                "${advancedState.summary?.miner?.power_efficiency}%"
+            )
+            val powerTitles: List<String> = listOf("Power Consumption", "Efficiency")
+            val powerMatrix = listOf(powerTitles, powerInfo)
+            item { MatrixDashboardCard(title = "Power", dataMatrix = powerMatrix) }
+
+
+            // Pools MatrixDashboardCard
+            val poolsTitles: List<String> = listOf("Pool", "Type", "Status")
+            val poolsInfo: List<List<String>> = advancedState.summary?.miner?.pools?.map { pool ->
+                listOf(pool.url, pool.pool_type, pool.status)
+            } ?: emptyList()
+            val poolMatrix = listOf(poolsTitles) + poolsInfo
+            item { MatrixDashboardCard(title = "Pools", dataMatrix = poolMatrix) }
+
+
+            // Fans MatrixDashboardCard
+            val fansInfo: List<List<String>> =
+                listOf(
+                    listOf(
+                        "${advancedState.summary?.miner?.cooling?.fan_num} Fans",
+                        "Duty",
+                        "${advancedState.summary?.miner?.cooling?.fan_duty}%"
+                    )
+                ) +
+                        listOf(listOf("", "", "")) +
+                        listOf(listOf("id", "RPM", "Status")) +
+                        (advancedState.summary?.miner?.cooling?.fans?.map { fan ->
+                            listOf(fan.id.toString(), fan.rpm.toString(), fan.status.toString())
+                        } ?: emptyList())
+            item { MatrixDashboardCard(title = "Fans", dataMatrix = fansInfo) }
+
+
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = { viewModel.createNewPool() },
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(NatioOrange40),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Add Pool")
+                }
+                Spacer(modifier = Modifier.height(32.dp))
+                Button(
+                    onClick = { viewModel.openMinerWeb() },
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(NatioOrange40),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Go to Miner Web")
                 }
             }
-            Image(
-                painter = painterResource(id = R.drawable.dosc),
-                contentDescription = "2c Image",
-                modifier = Modifier.size(100.dp)
-            )
-            Spacer(modifier = Modifier.height(16.dp))
         }
-
-
-        // Miner
-        val minerTitles: List<String> = listOf("miner", "status")
-        val minerInfo: List<String> = listOf(
-            "${advancedState.summary?.miner?.miner_type}",
-            "${advancedState.summary?.miner?.miner_status?.miner_state}",
-
-            )
-        val minerMatrix = listOf(minerTitles, minerInfo)
-        item { MatrixDashboardCard(title = "Miner", dataMatrix = minerMatrix) }
-
-        // Hashrate
-        val hashrateInfo: List<String> = listOf(
-            String.format(
-                "%.2f",
-                advancedState.summary?.miner?.hr_average?.div(1000) ?: 0.0
-            ) + "TH/s",
-            String.format(
-                "%.2f",
-                advancedState.summary?.miner?.hr_nominal?.div(1000) ?: 0.0
-            ) + "TH/s",
-            String.format(
-                "%.2f",
-                advancedState.summary?.miner?.hr_realtime?.div(1000) ?: 0.0
-            ) + "TH/s",
-            "${advancedState.summary?.miner?.found_blocks}"
-        )
-        val hashrateInfoDeprecated: List<String> = listOf(
-            String.format("%.2f", advancedState.summary?.miner?.average_hashrate ?: 0.0) + "TH/s",
-            String.format("%.2f", advancedState.summary?.miner?.instant_hashrate ?: 0.0) + "TH/s",
-            "${advancedState.summary?.miner?.found_blocks}"
-        )
-        val hasrateTitles: List<String> = listOf("average", "realtime", "nominal", "found blocks")
-        val hasrateTitlesDeprecated: List<String> = listOf("average", "realtime", "found blocks")
-        val hashrateMatix = listOf(hasrateTitles, hashrateInfo)
-        val hashrateMatixDeprecated = listOf(hashrateInfoDeprecated, hasrateTitlesDeprecated)
-        item { MatrixDashboardCard(title = "Hashrate", dataMatrix = hashrateMatix) }
-        item {
-            MatrixDashboardCard(
-                title = "Hashrate (Deprecated)",
-                dataMatrix = hashrateMatixDeprecated
-            )
-        }
-
-        // Temperature MatrixDashboardCard
-        val temperatureInfo: List<String> = listOf(
-            "${advancedState.summary?.miner?.pcb_temp?.min}ºC-${advancedState.summary?.miner?.pcb_temp?.max}ºC",
-            "${advancedState.summary?.miner?.chip_temp?.min}ºC-${advancedState.summary?.miner?.chip_temp?.max}ºC"
-        )
-        val temperatureTitles: List<String> = listOf("PCB Temp", "Chip Temp")
-        val temperatureMatrix = listOf(temperatureTitles, temperatureInfo)
-        item { MatrixDashboardCard(title = "Temperature", dataMatrix = temperatureMatrix) }
-
-        // Power MatrixDashboardCard
-        val powerInfo: List<String> = listOf(
-            "${advancedState.summary?.miner?.power_consumption}W",
-            "${advancedState.summary?.miner?.power_efficiency}%"
-        )
-        val powerTitles: List<String> = listOf("Power Consumption", "Efficiency")
-        val powerMatrix = listOf(powerTitles, powerInfo)
-        item { MatrixDashboardCard(title = "Power", dataMatrix = powerMatrix) }
-
-
-        // Pools MatrixDashboardCard
-        val poolsTitles: List<String> = listOf("Pool", "Type", "Status")
-        val poolsInfo: List<List<String>> = advancedState.summary?.miner?.pools?.map { pool ->
-            listOf(pool.url, pool.pool_type, pool.status)
-        } ?: emptyList()
-        val poolMatrix = listOf(poolsTitles) + poolsInfo
-        item { MatrixDashboardCard(title = "Pools", dataMatrix = poolMatrix) }
-
-
-        // Fans MatrixDashboardCard
-        val fansInfo: List<List<String>> =
-            listOf(listOf("${advancedState.summary?.miner?.cooling?.fan_num} Fans","Duty", "${advancedState.summary?.miner?.cooling?.fan_duty}%")) + listOf(
-                listOf("id","RPM", "Status")
-            ) + (advancedState.summary?.miner?.cooling?.fans?.map { fan ->
-                listOf(fan.id.toString(),fan.rpm.toString(), fan.status.toString())
-            } ?: emptyList())
-        item { MatrixDashboardCard(title = "Fans", dataMatrix = fansInfo) }
-
-
-
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = { viewModel.createNewPool() },
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Add Pool")
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = { viewModel.openMinerWeb() },
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Go to Miner Web")
-            }
-        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
-    Spacer(modifier = Modifier.height(16.dp))
 }
 
 @Composable

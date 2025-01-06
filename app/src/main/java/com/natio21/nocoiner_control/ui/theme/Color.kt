@@ -8,7 +8,8 @@ val NatioOrange40 = Color(0xFFDD8D00)
 val NatioGrey80 = Color(0x77CACACA)
 val NatioGrey40 = Color(0xFFCACACA)
 
-
 val NatioBlack80 = Color(0xFF000000)
 val NatioBlack40 = Color(0xFF000000)
 
+val NatioBackground80 = Color(0xFF777777) //dark
+val NatioBackground40 = Color(0xFFCACACA)
