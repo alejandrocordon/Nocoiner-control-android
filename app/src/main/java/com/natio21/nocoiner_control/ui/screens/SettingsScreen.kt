@@ -1,8 +1,11 @@
 package com.natio21.nocoiner_control.ui.screens;
 
+import android.graphics.Color
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +43,7 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
