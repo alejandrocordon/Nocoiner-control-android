@@ -94,8 +94,7 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
                             viewModel.context,
                             "Error ${appSettingsUiState.errorMsg}",
                             Toast.LENGTH_SHORT
-                        )
-                            .show()
+                        ).show()
                     }
                 }
             },
