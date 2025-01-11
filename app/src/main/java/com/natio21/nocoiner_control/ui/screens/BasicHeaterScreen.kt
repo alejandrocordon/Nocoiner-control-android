@@ -140,7 +140,6 @@ fun BasicHeaterScreen(
             Button(
                 onClick = {
                     Log.d("HomeScreen", "Temperatura al minimo 65ºC")
-                    //throw RuntimeException("Test Crash") // Force a crash
                     viewModel.setTemperature(65)
 
                 },
