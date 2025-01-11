@@ -139,8 +139,9 @@ fun BasicHeaterScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    Log.d("HomeScreen", "Temperatura al minimo 65ºC Test")
+                    Log.d("HomeScreen", "Temperatura al minimo 65ºC")
                     viewModel.setTemperature(65)
+
                 },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(NatioOrange40),

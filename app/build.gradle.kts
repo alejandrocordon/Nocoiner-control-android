@@ -74,12 +74,19 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
+    //Firebase
+    // Import the BoM for the Firebase platform
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.perf)
 
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
-    implementation(libs.okhttp) // o la versión más reciente
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material)
 

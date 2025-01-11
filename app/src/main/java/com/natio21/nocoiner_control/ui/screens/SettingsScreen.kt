@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.natio21.nocoiner_control.DynamicApiFactory
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
@@ -81,6 +82,9 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
 
         Button(
             onClick = {
+                viewModel.setIp(ip)
+                viewModel.updateIp(ip)
+                viewModel.updateApiKey(apiKey)
                 viewModel.validateAndSave { isConnected ->
                     if (isConnected) {
                         viewModel.updateIp(ip)
@@ -88,6 +92,8 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
                         Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
                         Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
                             .show()
+                        val apiService = DynamicApiFactory.create(ip)
+                        Log.d("SettingsScreen", "API Service created $apiService")
                         navController.navigate(MainRoutes.Basic.route)
                     } else {
                         Toast.makeText(
@@ -108,16 +114,21 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
+
             onClick = {
-                viewModel.validateAndSave { isValid ->
-                    if (isValid) {
-                        viewModel.updateIp("")
-                        viewModel.updateApiKey("")
-                        Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey cleared")
-                    } else {
-                        Log.e("SettingsScreen", "Error clearing IP and API Key")
-                    }
-                }
+                viewModel.updateIp("")
+                viewModel.updateApiKey("")
+                //viewModel.validateAndSave { isValid ->
+                //    if (isValid) {
+                //        viewModel.updateIp("")
+                //        viewModel.updateApiKey("")
+                //        Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey cleared")
+                //        val apiService = DynamicApiFactory.create(ip)
+                //        Log.d("SettingsScreen", "API Service created $apiService")
+                //    } else {
+                //        Log.e("SettingsScreen", "Error clearing IP and API Key")
+                //    }
+                //}
             },
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(NatioOrange40),

@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.natio21.nocoiner_control.DynamicApiFactory
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
@@ -80,6 +81,9 @@ fun WizardScreen(
 
         Button(
             onClick = {
+                viewModel.setIp(ip)
+                viewModel.updateIp(ip)
+                viewModel.updateApiKey(apiKey)
                 viewModel.validateAndSave { isConnected ->
                     if (isConnected) {
                         viewModel.updateIp(ip)
@@ -87,6 +91,8 @@ fun WizardScreen(
                         Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
                         Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
                             .show()
+                        val apiService = DynamicApiFactory.create(ip)
+                        Log.d("SettingsScreen", "API Service created $apiService")
                         onWizardComplete()
                     } else {
                         Toast.makeText(
