@@ -78,7 +78,8 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.moshi)
     implementation(libs.moshi.kotlin)
-    implementation(libs.okhttp) // o la versión más reciente
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material)
 
