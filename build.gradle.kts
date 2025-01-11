@@ -5,4 +5,8 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.google.dagger.hilt) apply false
+    id("com.google.firebase.firebase-perf") version "1.4.2" apply false
+    id("com.google.firebase.crashlytics") version "3.0.2" apply false
 }
+
+
