@@ -25,14 +25,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.min
 
 val wizardUiState: WizardUiState = WizardUiState()
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     application: Application,
-    private val minerApiService: MinerApiService,
     private val minerPrefs: MinerPrefs,
+    //private val minerApiService: MinerApiService,
+    private val repository: ServerRepository,
     @ApplicationContext val context: Context
 ) : AndroidViewModel(application) {
 
@@ -40,6 +42,7 @@ class MainViewModel @Inject constructor(
     private val _basicUiState = MutableStateFlow(BasicUiState())
     private val _advancedUiState = MutableStateFlow(AdvancedUiState())
     private val _appSettingsUiState = MutableStateFlow(AppSettingsUiState())
+    private var minerApiService: MinerApiService? = null
 
     val appSettingsUiState: StateFlow<AppSettingsUiState> = _appSettingsUiState
     val basicUiState: StateFlow<BasicUiState> = _basicUiState
@@ -64,6 +67,19 @@ class MainViewModel @Inject constructor(
         ip.value = newIp
         minerPrefs.saveIp(newIp)
     }
+    /**
+     * Llamado cuando el usuario introduce la IP y la validas
+     */
+    fun setIp(newIp: String) {
+        // 1. Validar IP (opcional, con regex).
+        // 2. Construir apiService dinámicamente
+        ip.value = newIp
+        minerPrefs.saveIp(newIp)
+        minerApiService = DynamicApiFactory.create(newIp)
+
+       //// Si quieres, podrías “pingear” automáticamente para comprobar que el servidor responde:
+       //checkServer()
+    }
 
     fun updateApiKey(newApiKey: String) {
         apiKey.value = newApiKey
@@ -79,11 +95,11 @@ class MainViewModel @Inject constructor(
             _basicUiState.update { it.copy(isLoading = true) }
             try {
                 val settingsResponse =
-                    minerApiService.getSettings(minerPrefs.getApiKey().toString())
+                    minerApiService?.getSettings(minerPrefs.getApiKey().toString())
                 //_settingsResponse.postValue(settingsResponse)
                 _basicUiState.update {
                     it.copy(
-                        currentTemperature = settingsResponse.miner.cooling.mode.param,
+                        currentTemperature = settingsResponse!!.miner.cooling.mode.param,
                         isLoading = false,
                         showSuccessMessage = true,
                         errorMsg = null,
@@ -115,13 +131,13 @@ class MainViewModel @Inject constructor(
                         )
                     )
                 )
-                val settingsResponse = minerApiService.updateSettings(
+                val settingsResponse = minerApiService?.updateSettings(
                     minerPrefs.getApiKey().toString(),
                     settingsRequest
                 )
                 _basicUiState.update {
                     it.copy(
-                        currentTemperature = settingsResponse.miner.cooling.mode.param,
+                        currentTemperature = settingsResponse!!.miner.cooling.mode.param,
                         isLoading = false,
                         showSuccessMessage = true,
                         errorMsg = null
@@ -138,11 +154,38 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun getInfo() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _basicUiState.update { it.copy(isLoading = true) }
+            try {
+                val minerInfo = minerApiService?.getMinerInfo()
+                Log.d("MainViewModel", "MinerInfo: $minerInfo")
+                _basicUiState.update {
+                    it.copy(
+                        minerInfo = minerInfo,
+                        isLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Error al consultar info: ${e.message} ip: ${minerPrefs.getIp()}}"
+                )
+                _advancedUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = "Error al consultar hashrate: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+                    )
+                }
+            }
+        }
+    }
+
     fun getSummary() {
         viewModelScope.launch(Dispatchers.IO) {
             _advancedUiState.update { it.copy(isLoading = true) }
             try {
-                val summary = minerApiService.getSummary(minerPrefs.getApiKey().toString())
+                val summary = minerApiService?.getSummary(minerPrefs.getApiKey().toString())
                 _advancedUiState.update {
                     it.copy(
                         summary = summary,
@@ -160,72 +203,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getHashrate() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _advancedUiState.update { it.copy(isLoading = true) }
-            try {
-                val summary = minerApiService.getSummary(minerPrefs.getApiKey().toString())
-                val hashrate = summary.miner.average_hashrate
-                _advancedUiState.update {
-                    it.copy(
-                        hashrate = hashrate.toString(),
-                        isLoading = false
-                    )
-                }
-            } catch (e: Exception) {
-                _advancedUiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMsg = "Error al consultar hashrate: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
-                    )
-                }
-            }
-        }
-    }
-
-
-    fun loadTemperature() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _basicUiState.update { it.copy(isLoading = true, errorMsg = null) }
-
-
-            try {
-                val settingsResponse =
-                    minerApiService.getSettings(minerPrefs.getApiKey().toString())
-
-                // 3. Actualizar el estado con el nuevo valor
-                _basicUiState.update {
-                    it.copy(
-                        currentTemperature = settingsResponse.miner.cooling.mode.param,
-                        isLoading = false
-                    )
-                }
-            } catch (e: Exception) {
-                // Manejar error y volver a notificar que no está cargando
-                Log.e(
-                    TAG,
-                    "Error al consultar temperatura: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
-                )
-                //_basicUiState.update {
-                //    it.copy(
-                //        isLoading = false,
-                //        errorMsg = "Error al consultar temperatura: ${e.message} ip: ${appSettingsUiState.value.ip} apiKey: ${appSettingsUiState.value.apiKey}"
-                //    )
-                //}
-            }
-        }
-    }
-
-
     private suspend fun checkConnectivity(): Boolean {
         var isConnected = false
         viewModelScope.launch(Dispatchers.IO) {
             _basicUiState.update { it.copy(isLoading = true, errorMsg = null) }
             try {
-                val settingsResponse = minerApiService.getSettings(minerPrefs.getApiKey().toString())
+                val settingsResponse = minerApiService?.getSettings(minerPrefs.getApiKey().toString())
                 _basicUiState.update {
                     it.copy(
-                        currentTemperature = settingsResponse.miner.cooling.mode.param,
+                        currentTemperature = settingsResponse!!.miner.cooling.mode.param,
                         isLoading = false
                     )
                 }
@@ -329,7 +315,8 @@ data class BasicUiState(
     var timerMinutes: Int = 0,
     var showSuccessMessage: Boolean = false,
     var errorMsg: String? = null,
-    var isLoading: Boolean = false
+    var isLoading: Boolean = false,
+    var minerInfo: MinerInfo? = null
 )
 
 data class AdvancedUiState(
