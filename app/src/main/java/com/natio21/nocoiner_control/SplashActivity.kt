@@ -52,19 +52,3 @@ class SplashActivity : ComponentActivity() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SplashActivityPreview() {
-    NocoinercontrolTheme {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.natio21),
-                contentDescription = null,
-                modifier = Modifier.wrapContentSize()
-            )
-        }
-    }
-}

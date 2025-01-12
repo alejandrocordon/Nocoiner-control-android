@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Nocoiner-control</string>
+    <string name="app_name">Nocoiner</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Abrir menú de navegación</string>

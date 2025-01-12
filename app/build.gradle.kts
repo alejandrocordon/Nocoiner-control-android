@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
     alias(libs.plugins.google.dagger.hilt)
-
+    id ("com.google.firebase.crashlytics")
     id("com.google.gms.google-services")
 }
 
@@ -90,14 +90,14 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.material)
 
-    implementation(platform(libs.google.firebase.bom))
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     // Import the BoM for the Firebase platform
 
     // Add the dependencies for the Crashlytics and Analytics libraries
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation(libs.firebase.crashlytics)
-    implementation(libs.google.firebase.analytics)
+    implementation(libs.firebase.perf)
 }
 
 kapt {
