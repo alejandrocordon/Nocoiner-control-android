@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -105,7 +106,7 @@ fun BasicHeaterScreen(
 
             Text(
                 text = buildAnnotatedString {
-                    append("Temperature: ")
+                    append("Temperatura del chip: ")
                     withStyle(style = SpanStyle(fontSize = 24.sp, color = NatioOrange40)) {
                         append("$temperatureInfo ºC")
                     }
@@ -117,44 +118,65 @@ fun BasicHeaterScreen(
             Spacer(modifier = Modifier.height(64.dp))
             Button(
                 onClick = {
-                    Log.d("HomeScreen", "Temperatura al maximo 80ºC")
+                    Log.d("HomeScreen", "Temperatura del chip 80ºC")
                     viewModel.setTemperature(80)
                 },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(NatioOrange40),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Modo calefacción 80ºC",
-                    fontWeight = FontWeight.Bold,
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Modo calefacción",
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        "Temperatura del chip 80ºC",
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    Log.d("HomeScreen", "Temperatura al maximo 72ºC")
+                    Log.d("HomeScreen", "Temperatura del chip 72ºC")
                     viewModel.setTemperature(72)
                 },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(NatioOrange40),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Modo intermedio 72ºC",
-                    fontWeight = FontWeight.Bold,
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Modo intermedio",
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        "Temperatura del chip 72ºC",
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    Log.d("HomeScreen", "Temperatura al minimo 65ºC")
+                    Log.d("HomeScreen", "Temperatura del chip 65ºC")
                     viewModel.setTemperature(65)
                 },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(NatioOrange40),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Modo eficiencia 65ºC",
-                    fontWeight = FontWeight.Bold,
-                )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Modo eficiencia",
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        "Temperatura del chip 65ºC",
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
 
