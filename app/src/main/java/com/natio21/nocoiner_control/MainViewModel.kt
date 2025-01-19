@@ -50,10 +50,10 @@ class MainViewModel @Inject constructor(
     var apiKey = mutableStateOf("")
 
     fun init() {
-        ip.value = minerPrefs.getIp().toString()
-        apiKey.value = minerPrefs.getApiKey().toString()
-        appSettingsUiState.value.ip = minerPrefs.getIp().toString()
-        appSettingsUiState.value.apiKey = minerPrefs.getApiKey().toString()
+        ip.value = minerPrefs.getIp() ?: ""
+        apiKey.value = minerPrefs.getApiKey() ?: ""
+        appSettingsUiState.value.ip = minerPrefs.getIp() ?: ""
+        appSettingsUiState.value.apiKey = minerPrefs.getApiKey() ?: ""
     }
 
     fun getIpFromPrefs(): String? {
