@@ -11,6 +11,7 @@ fun AppNavHost(
     navController: NavHostController,
     viewModel: MainViewModel
 ) {
+    viewModel.init()
     NavHost(navController, startDestination = Routes.Splash.route) {
 
         composable(Routes.Splash.route) {

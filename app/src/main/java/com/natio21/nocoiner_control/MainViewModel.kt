@@ -47,9 +47,14 @@ class MainViewModel @Inject constructor(
     val advancedUiState: StateFlow<AdvancedUiState> = _advancedUiState
 
     var ip = mutableStateOf("")
-
     var apiKey = mutableStateOf("")
 
+    fun init() {
+        ip.value = minerPrefs.getIp().toString()
+        apiKey.value = minerPrefs.getApiKey().toString()
+        appSettingsUiState.value.ip = minerPrefs.getIp().toString()
+        appSettingsUiState.value.apiKey = minerPrefs.getApiKey().toString()
+    }
 
     fun getIpFromPrefs(): String? {
         return minerPrefs.getIp()
