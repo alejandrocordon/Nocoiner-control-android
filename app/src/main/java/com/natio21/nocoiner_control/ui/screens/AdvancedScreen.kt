@@ -29,6 +29,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdvancedScreen(viewModel: MainViewModel) {
     val advancedState by viewModel.advancedUiState.collectAsState()
+    val isDarkTheme = isSystemInDarkTheme()
+    val colorFilter = if (isDarkTheme) ColorFilter.tint(Color.Gray) else null
 
     NocoinercontrolTheme {
         LazyColumn(
@@ -69,7 +73,8 @@ fun AdvancedScreen(viewModel: MainViewModel) {
                 Image(
                     painter = painterResource(id = R.drawable.dosc),
                     contentDescription = "2c Image",
-                    modifier = Modifier.size(100.dp)
+                    modifier = Modifier.size(100.dp),
+                    colorFilter = colorFilter
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

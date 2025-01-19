@@ -3,6 +3,7 @@ package com.natio21.nocoiner_control.ui.screens
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.natio21.nocoiner_control.DynamicApiFactory
@@ -37,6 +39,8 @@ fun WizardScreen(
     val ip by viewModel.ip
     val apiKey by viewModel.apiKey
     val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
+    val isDarkTheme = isSystemInDarkTheme()
+    val colorFilter = if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -49,7 +53,8 @@ fun WizardScreen(
         Image(
             painter = painterResource(id = R.drawable.dosc),
             contentDescription = "2c Image",
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(200.dp),
+            colorFilter = colorFilter
         )
         Spacer(modifier = Modifier.height(16.dp))
 

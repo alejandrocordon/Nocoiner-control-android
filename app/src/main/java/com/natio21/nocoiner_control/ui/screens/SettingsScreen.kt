@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -38,6 +39,8 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
     val ip by viewModel.ip
     val apiKey by viewModel.apiKey
     val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
+    val isDarkTheme = isSystemInDarkTheme()
+    val colorFilter = if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -51,7 +54,8 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         Image(
             painter = painterResource(id = R.drawable.dosc),
             contentDescription = "2c Image",
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(100.dp),
+            colorFilter = colorFilter
         )
         Text(
             text = "Setup your Miner",
