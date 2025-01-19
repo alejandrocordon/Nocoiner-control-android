@@ -8,14 +8,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
@@ -26,17 +31,21 @@ class SplashActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NocoinercontrolTheme {
+                val isDarkTheme = isSystemInDarkTheme()
+                val tintColor = if (isDarkTheme) Color.White else Color.Black
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.natio21),
                             contentDescription = null,
-                            modifier = Modifier.wrapContentSize()
+                            modifier = Modifier.wrapContentSize(),
+                            colorFilter = ColorFilter.tint(tintColor)
                         )
                     }
                 }
