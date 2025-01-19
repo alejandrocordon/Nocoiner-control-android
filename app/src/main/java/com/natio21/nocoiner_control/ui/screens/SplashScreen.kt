@@ -20,7 +20,7 @@ fun SplashScreen(
         // Haz la comprobación de IP y API Key
         val hasData = viewModel.hasSavedData()
         if (hasData) {
-            viewModel.setIp(viewModel.getIp().toString())
+            viewModel.setIp(viewModel.getIpFromPrefs().toString())
             onGoToMain()
         } else {
             onWizardNeeded()

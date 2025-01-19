@@ -169,7 +169,6 @@ fun BasicHeaterScreen(
             Button(
                 onClick = {
                     Log.d("HomeScreen", "Temperatura al minimo 65ºC")
-                    throw RuntimeException("Test Crash") // Force a crash
                     viewModel.setTemperature(65)
                 },
                 shape = RoundedCornerShape(8.dp),
@@ -236,27 +235,27 @@ fun BasicHeaterScreen(
     //}
 
     // Manejo de diálogos de error
-    if (uiState.errorMsg != null) {
-        AlertDialog(
-            onDismissRequest = { viewModel.clearError() },
-            title = { Text("Error") },
-            text = { Text(uiState.errorMsg!!) },
-            confirmButton = {
-                TextButton(onClick = { viewModel.clearError() }) {
-                    Text("OK")
-                }
-            }
-        )
-    }
-    if (uiState.showSuccessMessage) {
-        SnackbarHost(
-            hostState = remember { SnackbarHostState() },
-            snackbar = {
-                Snackbar {
-                    Text("Temperature Updated!")
-                }
-            }
-        )
-    }
+    //if (uiState.errorMsg != null) {
+    //    AlertDialog(
+    //        onDismissRequest = { viewModel.clearError() },
+    //        title = { Text("Error") },
+    //        text = { Text(uiState.errorMsg!!) },
+    //        confirmButton = {
+    //            TextButton(onClick = { viewModel.clearError() }) {
+    //                Text("OK")
+    //            }
+    //        }
+    //    )
+    //}
+    //if (uiState.showSuccessMessage) {
+    //    SnackbarHost(
+    //        hostState = remember { SnackbarHostState() },
+    //        snackbar = {
+    //            Snackbar {
+    //                Text("Temperature Updated!")
+    //            }
+    //        }
+    //    )
+    //}
 
 }

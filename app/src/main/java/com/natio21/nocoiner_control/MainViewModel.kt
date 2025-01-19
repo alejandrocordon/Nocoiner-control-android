@@ -15,7 +15,6 @@ import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
-import com.natio21.nocoiner_control.openapi.client.models.Summary
 import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,7 +24,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.min
 
 val wizardUiState: WizardUiState = WizardUiState()
 
@@ -49,22 +47,21 @@ class MainViewModel @Inject constructor(
     val advancedUiState: StateFlow<AdvancedUiState> = _advancedUiState
 
     var ip = mutableStateOf("")
-        private set
 
     var apiKey = mutableStateOf("")
-        private set
 
 
-    fun getIp(): String? {
+    fun getIpFromPrefs(): String? {
         return minerPrefs.getIp()
     }
 
-    fun getApiKey(): String? {
+    fun getApiKeyFromPrefs(): String? {
         return minerPrefs.getApiKey()
     }
 
     fun updateIp(newIp: String) {
         ip.value = newIp
+        appSettingsUiState.value.ip = newIp
         minerPrefs.saveIp(newIp)
     }
     /**
@@ -74,6 +71,7 @@ class MainViewModel @Inject constructor(
         // 1. Validar IP (opcional, con regex).
         // 2. Construir apiService dinámicamente
         ip.value = newIp
+        appSettingsUiState.value.ip = newIp
         minerPrefs.saveIp(newIp)
         minerApiService = DynamicApiFactory.create(newIp)
 
@@ -82,11 +80,18 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateApiKey(newApiKey: String) {
+        Log.d("MainViewModel", "apiKey oldApiKey: ${minerPrefs.getApiKey()} newApiKey: $newApiKey")
         apiKey.value = newApiKey
+        appSettingsUiState.value.apiKey = newApiKey
         minerPrefs.saveApiKey(newApiKey)
+        Log.d("MainViewModel", "apiKey value: ${apiKey.value} ApiKeyPrefs: $${minerPrefs.getApiKey()}")
     }
 
     fun hasSavedData(): Boolean {
+        Log.d("MainViewModel", "hasSavedData: ${ip.value} ${apiKey.value}")
+        Log.d("MainViewModel", "hasSavedData: ${appSettingsUiState.value.ip} ${appSettingsUiState.value.apiKey}")
+        Log.d("MainViewModel", "hasSavedData: ${minerPrefs.getIp()} ${minerPrefs.getApiKey()}")
+
         return !minerPrefs.getIp().isNullOrEmpty() && !minerPrefs.getApiKey().isNullOrEmpty()
     }
 
@@ -119,6 +124,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun setTemperature(newTemp: Int) {
+        Log.d("MainViewModel", "setTemperature: ${ip.value} ${apiKey.value}")
+        Log.d("MainViewModel", "setTemperature: ${appSettingsUiState.value.ip} ${appSettingsUiState.value.apiKey}")
+        Log.d("MainViewModel", "setTemperature: ${minerPrefs.getIp()} ${minerPrefs.getApiKey()}")
+
+
         viewModelScope.launch(Dispatchers.IO) {
             _basicUiState.update { it.copy(isLoading = true) }
             try {
@@ -182,6 +192,10 @@ class MainViewModel @Inject constructor(
     }
 
     fun getSummary() {
+        Log.d("MainViewModel", "getSummary: ${ip.value} ${apiKey.value}")
+        Log.d("MainViewModel", "getSummary: ${appSettingsUiState.value.ip} ${appSettingsUiState.value.apiKey}")
+        Log.d("MainViewModel", "getSummary: ${minerPrefs.getIp()} ${minerPrefs.getApiKey()}")
+
         viewModelScope.launch(Dispatchers.IO) {
             _advancedUiState.update { it.copy(isLoading = true) }
             try {

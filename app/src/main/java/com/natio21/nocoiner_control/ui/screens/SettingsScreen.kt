@@ -1,6 +1,5 @@
 package com.natio21.nocoiner_control.ui.screens;
 
-import android.graphics.Color
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -64,9 +63,9 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Current Ip: ${viewModel.getIp()}",color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "Current Ip: ${viewModel.getIpFromPrefs()}",color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Current ApiKey: ${viewModel.getApiKey()}",color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "Current ApiKey: ${viewModel.getApiKeyFromPrefs()}",color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
