@@ -59,7 +59,6 @@ import kotlinx.coroutines.launch
 fun BasicHeaterScreen(
     viewModel: MainViewModel,
 ) {
-    //val uiState = viewModel.basicUiState
     val uiState by viewModel.basicUiState.collectAsState()
     val advancedState by viewModel.advancedUiState.collectAsState()
 

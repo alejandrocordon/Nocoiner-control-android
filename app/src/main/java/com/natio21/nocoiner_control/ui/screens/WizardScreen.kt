@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,29 +53,29 @@ fun WizardScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Setup your Miner")
+        Text(text = "Setup your Miner",color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Ip example : ")
-        Text(text = "http://192.168.1.121/")
+        Text(text = "Ip example : ",color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "http://192.168.1.121/",color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "ApiKey example (32 chars): ")
-        Text(text = "asdfasdfasdfasdfasdfasdfasdfabtc ")
+        Text(text = "ApiKey example (32 chars): ",color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "asdfasdfasdfasdfasdfasdfasdfabtc",color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
 
 
         OutlinedTextField(
             value = ip,
             onValueChange = { viewModel.updateIp(it) },
-            label = { Text("Miner IP or DNS") },
-            placeholder = { Text("Miner IP or DNS") },
+            label = { Text("Miner IP or DNS",color = MaterialTheme.colorScheme.onBackground) },
+            placeholder = { Text("Miner IP or DNS",color = MaterialTheme.colorScheme.onBackground) },
         )
 
         OutlinedTextField(
             value = apiKey,
             onValueChange = { viewModel.updateApiKey(it) },
-            label = { Text("API Key") },
-            placeholder = { Text("API Key") },
+            label = { Text("API Key",color = MaterialTheme.colorScheme.onBackground) },
+            placeholder = { Text("API Key",color = MaterialTheme.colorScheme.onBackground) },
         )
 
         Spacer(modifier = Modifier.height(16.dp))

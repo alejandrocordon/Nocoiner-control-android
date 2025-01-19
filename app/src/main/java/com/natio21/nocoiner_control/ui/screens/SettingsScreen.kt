@@ -55,13 +55,14 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         )
         Text(
             text = "Setup your Miner",
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Cuurent Ip: ${viewModel.getIp()}")
+        Text(text = "Current Ip: ${viewModel.getIp()}",color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Current ApiKey: ${viewModel.getApiKey()}")
+        Text(text = "Current ApiKey: ${viewModel.getApiKey()}",color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
