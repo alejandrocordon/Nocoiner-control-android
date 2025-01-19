@@ -46,7 +46,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
@@ -97,31 +100,44 @@ fun BasicHeaterScreen(
                 modifier = Modifier.size(100.dp),
                 colorFilter = colorFilter
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
 
-        // Temperature MatrixDashboardCard
-        val temperatureInfo: List<String> = listOf(
-            "${advancedState.summary?.miner?.pcb_temp?.max}ºC",
-            "${advancedState.summary?.miner?.chip_temp?.max}ºC"
-        )
-        val temperatureTitles: List<String> = listOf("PCB Temp", "Chip Temp")
-        val temperatureMatrix = listOf(temperatureTitles, temperatureInfo)
-        item { MatrixDashboardCard(title = "Temperature", dataMatrix = temperatureMatrix) }
 
-
-        // Power MatrixDashboardCard
-        val powerInfo: List<String> = listOf(
-            "${advancedState.summary?.miner?.power_consumption}W"
-        )
-        val powerTitles: List<String> = listOf("Power Consumption", "Efficiency")
-        val powerMatrix = listOf(powerTitles, powerInfo)
-        item { MatrixDashboardCard(title = "Power", dataMatrix = powerMatrix) }
-
+        val hashrate = advancedState.summary?.miner?.average_hashrate?.let {
+            String.format("%.2f", it.toDouble())
+        } ?: "N/A"
+        val temperatureInfo = "${advancedState.summary?.miner?.chip_temp?.max}"
 
 
         item {
+
+            Text(
+                text = buildAnnotatedString {
+                    append("Hashrate: ")
+                    withStyle(style = SpanStyle(fontSize = 24.sp, color = NatioOrange40)) {
+                        append("$hashrate TH/s")
+                    }
+                },
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = buildAnnotatedString {
+                    append("Temperature: ")
+                    withStyle(style = SpanStyle(fontSize = 24.sp, color = NatioOrange40)) {
+                        append("$temperatureInfo ºC")
+                    }
+                },
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(64.dp))
             Button(
                 onClick = {
                     Log.d("HomeScreen", "Temperatura al maximo 80ºC")
@@ -131,19 +147,23 @@ fun BasicHeaterScreen(
                 colors = ButtonDefaults.buttonColors(NatioOrange40),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(id = R.string.max_temperature))
+                Text("Modo calefacción 80ºC",
+                    fontWeight = FontWeight.Bold,
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    Log.d("HomeScreen", "Temperatura al maximo 70ºC")
-                    viewModel.setTemperature(70)
+                    Log.d("HomeScreen", "Temperatura al maximo 72ºC")
+                    viewModel.setTemperature(72)
                 },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(NatioOrange40),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(id = R.string.medium_temperature))
+                Text("Modo intermedio 72ºC",
+                    fontWeight = FontWeight.Bold,
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
@@ -151,13 +171,14 @@ fun BasicHeaterScreen(
                     Log.d("HomeScreen", "Temperatura al minimo 65ºC")
                     throw RuntimeException("Test Crash") // Force a crash
                     viewModel.setTemperature(65)
-
                 },
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(NatioOrange40),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(id = R.string.min_temperature))
+                Text("Modo eficiencia 65ºC",
+                    fontWeight = FontWeight.Bold,
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
 
