@@ -106,30 +106,11 @@ fun AdvancedScreen(viewModel: MainViewModel) {
                 ) + "TH/s",
                 "${advancedState.summary?.miner?.found_blocks}"
             )
-            val hashrateInfoDeprecated: List<String> = listOf(
-                String.format(
-                    "%.2f",
-                    advancedState.summary?.miner?.average_hashrate ?: 0.0
-                ) + "TH/s",
-                String.format(
-                    "%.2f",
-                    advancedState.summary?.miner?.instant_hashrate ?: 0.0
-                ) + "TH/s",
-                "${advancedState.summary?.miner?.found_blocks}"
-            )
+
             val hasrateTitles: List<String> =
-                listOf("average", "realtime", "nominal", "found blocks")
-            val hasrateTitlesDeprecated: List<String> =
                 listOf("average", "realtime", "found blocks")
             val hashrateMatix = listOf(hasrateTitles, hashrateInfo)
-            val hashrateMatixDeprecated = listOf(hashrateInfoDeprecated, hasrateTitlesDeprecated)
             item { MatrixDashboardCard(title = "Hashrate", dataMatrix = hashrateMatix) }
-            item {
-                MatrixDashboardCard(
-                    title = "Hashrate (Deprecated)",
-                    dataMatrix = hashrateMatixDeprecated
-                )
-            }
 
             // Temperature MatrixDashboardCard
             val temperatureInfo: List<String> = listOf(
@@ -151,13 +132,21 @@ fun AdvancedScreen(viewModel: MainViewModel) {
 
 
             // Pools MatrixDashboardCard
-            val poolsTitles: List<String> = listOf("Pool", "Type", "Status")
+            val poolsTitles: List<String> = listOf("Pool", "Type", "Status", "Lantency")
             val poolsInfo: List<List<String>> = advancedState.summary?.miner?.pools?.map { pool ->
-                listOf(pool.url, pool.pool_type, pool.status)
+                listOf(pool.url, pool.pool_type, pool.status, pool.ping.toString())
             } ?: emptyList()
             val poolMatrix = listOf(poolsTitles) + poolsInfo
             item { MatrixDashboardCard(title = "Pools", dataMatrix = poolMatrix) }
 
+            // DevFee MatrixDashboardCard
+            val devFeeInfo: List<String> = listOf(
+                "${advancedState.summary?.miner?.devfee}GH/s",
+                "${advancedState.summary?.miner?.devfee_percent}%"
+            )
+            val devFeeTitles: List<String> = listOf("DevFee", "DevFee Percent")
+            val devFeeMatrix = listOf(devFeeTitles, devFeeInfo)
+            item { MatrixDashboardCard(title = "DevFee", dataMatrix = devFeeMatrix) }
 
             // Fans MatrixDashboardCard
             val fansInfo: List<List<String>> =
