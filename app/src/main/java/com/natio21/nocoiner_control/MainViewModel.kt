@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
@@ -118,6 +119,7 @@ class MainViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 //_settingsResponse.postValue(null)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 _basicUiState.update {
                     it.copy(
                         isLoading = false,
@@ -159,6 +161,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
                 _basicUiState.update {
                     it.copy(
                         isLoading = false,
@@ -182,6 +185,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
                 Log.e(
                     TAG,
                     "Error al consultar info: ${e.message} ip: ${minerPrefs.getIp()}}"
@@ -212,6 +216,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
                 _advancedUiState.update {
                     it.copy(
                         isLoading = false,
@@ -220,6 +225,11 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun isValidIpOrDomain(ip: String): Boolean {
+        val ipPattern = Regex("^(http://|https://)?(([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}|(\\d{1,3}\\.){3}\\d{1,3})$")
+        return ipPattern.matches(ip)
     }
 
     private suspend fun checkConnectivity(): Boolean {
@@ -242,6 +252,7 @@ class MainViewModel @Inject constructor(
                 }
                 isConnected = true
             } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
                 _appSettingsUiState.update {
                     it.copy(
                         isLoading = false,
@@ -263,7 +274,7 @@ class MainViewModel @Inject constructor(
         return context.packageManager.getPackageInfo(context.packageName, 0).versionName.toString()
     }
 
-    fun validateAndSave(onComplete: (Boolean) -> Unit) {
+    fun checkConnectivityAndSave(onComplete: (Boolean) -> Unit) {
         viewModelScope.launch {
             val isConnected = checkConnectivity()
             onComplete(isConnected)
@@ -309,6 +320,7 @@ class MainViewModel @Inject constructor(
             try {
                 context.startActivity(intent)
             } catch (e: ActivityNotFoundException) {
+                FirebaseCrashlytics.getInstance().recordException(e)
                 Toast.makeText(
                     context,
                     "No application can handle this request. Please install a web browser.",

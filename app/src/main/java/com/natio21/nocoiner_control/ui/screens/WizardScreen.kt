@@ -40,7 +40,8 @@ fun WizardScreen(
     val apiKey by viewModel.apiKey
     val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
     val isDarkTheme = isSystemInDarkTheme()
-    val colorFilter = if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
+    val colorFilter =
+        if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,56 +59,69 @@ fun WizardScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Setup your Miner",color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "Setup your Miner", color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Ip example : ",color = MaterialTheme.colorScheme.onBackground)
-        Text(text = "http://192.168.1.121/",color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "Ip example : ", color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "http://192.168.1.121/", color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "ApiKey example (32 chars): ",color = MaterialTheme.colorScheme.onBackground)
-        Text(text = "asdfasdfasdfasdfasdfasdfasdfabtc",color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "ApiKey example (32 chars): ", color = MaterialTheme.colorScheme.onBackground)
+        Text(
+            text = "asdfasdfasdfasdfasdfasdfasdfabtc",
+            color = MaterialTheme.colorScheme.onBackground
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
 
         OutlinedTextField(
             value = ip,
             onValueChange = { viewModel.updateIp(it) },
-            label = { Text("Miner IP or DNS",color = MaterialTheme.colorScheme.onBackground) },
-            placeholder = { Text("Miner IP or DNS",color = MaterialTheme.colorScheme.onBackground) },
+            label = { Text("Miner IP or DNS", color = MaterialTheme.colorScheme.onBackground) },
+            placeholder = {
+                Text(
+                    "Miner IP or DNS",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            },
         )
 
         OutlinedTextField(
             value = apiKey,
             onValueChange = { viewModel.updateApiKey(it) },
-            label = { Text("API Key",color = MaterialTheme.colorScheme.onBackground) },
-            placeholder = { Text("API Key",color = MaterialTheme.colorScheme.onBackground) },
+            label = { Text("API Key", color = MaterialTheme.colorScheme.onBackground) },
+            placeholder = { Text("API Key", color = MaterialTheme.colorScheme.onBackground) },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                viewModel.setIp(ip)
-                viewModel.updateIp(ip)
-                viewModel.updateApiKey(apiKey)
-                viewModel.validateAndSave { isConnected ->
-                    if (isConnected) {
-                        viewModel.updateIp(ip)
-                        viewModel.updateApiKey(apiKey)
-                        Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
-                        Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
-                            .show()
-                        val apiService = DynamicApiFactory.create(ip)
-                        Log.d("SettingsScreen", "API Service created $apiService")
-                        onWizardComplete()
-                    } else {
-                        Toast.makeText(
-                            viewModel.context,
-                            "Error ${appSettingsUiState.errorMsg}",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+                if (viewModel.isValidIpOrDomain(ip)) {
+                    viewModel.setIp(ip)
+                    viewModel.updateIp(ip)
+                    viewModel.updateApiKey(apiKey)
+                    viewModel.checkConnectivityAndSave { isConnected ->
+                        if (isConnected) {
+                            viewModel.updateIp(ip)
+                            viewModel.updateApiKey(apiKey)
+                            Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
+                            Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
+                                .show()
+                            val apiService = DynamicApiFactory.create(ip)
+                            Log.d("SettingsScreen", "API Service created $apiService")
+                            onWizardComplete()
+                        } else {
+                            Toast.makeText(
+                                viewModel.context,
+                                "Error ${appSettingsUiState.errorMsg}",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }
                     }
+                } else {
+                    Toast.makeText(viewModel.context, "Please check a valid ip with prefix http(s)://xxx.xxx.xxx.xxx or valid domain", Toast.LENGTH_SHORT)
+                        .show()
                 }
             },
             shape = RoundedCornerShape(8.dp),

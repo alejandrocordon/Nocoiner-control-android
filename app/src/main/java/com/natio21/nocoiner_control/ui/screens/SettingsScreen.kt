@@ -39,7 +39,8 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
     val apiKey by viewModel.apiKey
     val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
     val isDarkTheme = isSystemInDarkTheme()
-    val colorFilter = if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
+    val colorFilter =
+        if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -63,9 +64,15 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Current Ip: ${viewModel.getIpFromPrefs()}",color = MaterialTheme.colorScheme.onBackground)
+        Text(
+            text = "Current Ip: ${viewModel.getIpFromPrefs()}",
+            color = MaterialTheme.colorScheme.onBackground
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Current ApiKey: ${viewModel.getApiKeyFromPrefs()}",color = MaterialTheme.colorScheme.onBackground)
+        Text(
+            text = "Current ApiKey: ${viewModel.getApiKeyFromPrefs()}",
+            color = MaterialTheme.colorScheme.onBackground
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -86,26 +93,35 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
 
         Button(
             onClick = {
-                viewModel.setIp(ip)
-                viewModel.updateIp(ip)
-                viewModel.updateApiKey(apiKey)
-                viewModel.validateAndSave { isConnected ->
-                    if (isConnected) {
-                        viewModel.updateIp(ip)
-                        viewModel.updateApiKey(apiKey)
-                        Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
-                        Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
-                            .show()
-                        val apiService = DynamicApiFactory.create(ip)
-                        Log.d("SettingsScreen", "API Service created $apiService")
-                        navController.navigate(MainRoutes.Basic.route)
-                    } else {
-                        Toast.makeText(
-                            viewModel.context,
-                            "Error ${appSettingsUiState.errorMsg}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                if (viewModel.isValidIpOrDomain(ip)) {
+                    viewModel.setIp(ip)
+                    viewModel.updateIp(ip)
+                    viewModel.updateApiKey(apiKey)
+                    viewModel.checkConnectivityAndSave { isConnected ->
+                        if (isConnected) {
+                            viewModel.updateIp(ip)
+                            viewModel.updateApiKey(apiKey)
+                            Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
+                            Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
+                                .show()
+                            val apiService = DynamicApiFactory.create(ip)
+                            Log.d("SettingsScreen", "API Service created $apiService")
+                            navController.navigate(MainRoutes.Basic.route)
+                        } else {
+                            Toast.makeText(
+                                viewModel.context,
+                                "Error ${appSettingsUiState.errorMsg}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
+                } else {
+                    Toast.makeText(
+                        viewModel.context,
+                        "Please check a valid ip with prefix http(s)://xxx.xxx.xxx.xxx or valid domain",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
                 }
             },
             shape = RoundedCornerShape(8.dp),
@@ -142,7 +158,10 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         }
 
         Spacer(modifier = Modifier.height(32.dp))
-        Text(text = "App version: ${viewModel.getAppVersion()}", modifier = Modifier.align(Alignment.End))
+        Text(
+            text = "App version: ${viewModel.getAppVersion()}",
+            modifier = Modifier.align(Alignment.End)
+        )
         Spacer(modifier = Modifier.height(16.dp))
 
     }
