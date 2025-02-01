@@ -63,7 +63,7 @@ fun WizardScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Ip example : ", color = MaterialTheme.colorScheme.onBackground)
-        Text(text = "http://192.168.1.121/", color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "http://192.168.1.121", color = MaterialTheme.colorScheme.onBackground)
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "ApiKey example (32 chars): ", color = MaterialTheme.colorScheme.onBackground)
         Text(
