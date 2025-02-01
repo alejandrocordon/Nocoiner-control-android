@@ -71,7 +71,7 @@ fun AdvancedScreen(viewModel: MainViewModel) {
                     }
                 }
                 Image(
-                    painter = painterResource(id = R.drawable.dosc),
+                    painter = painterResource(id = R.mipmap.ic_launcher_foreground),
                     contentDescription = "2c Image",
                     modifier = Modifier.size(100.dp),
                     colorFilter = colorFilter
