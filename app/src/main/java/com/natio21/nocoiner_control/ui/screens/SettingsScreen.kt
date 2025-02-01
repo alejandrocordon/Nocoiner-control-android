@@ -6,7 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +31,7 @@ import com.natio21.nocoiner_control.DynamicApiFactory
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import androidx.compose.foundation.lazy.LazyColumn
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
@@ -39,10 +39,9 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
     val apiKey by viewModel.apiKey
     val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
     val isDarkTheme = isSystemInDarkTheme()
-    val colorFilter =
-        if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
+    val colorFilter = if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
 
-    Column(
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
         modifier = Modifier
@@ -50,119 +49,112 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
+        item {
+            Image(
+                painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+                contentDescription = "2c Image",
+                modifier = Modifier.size(100.dp),
+                colorFilter = colorFilter
+            )
+            Text(
+                text = "Setup your Miner",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
 
-        Image(
-            painter = painterResource(id = R.mipmap.ic_launcher_foreground),
-            contentDescription = "2c Image",
-            modifier = Modifier.size(100.dp),
-            colorFilter = colorFilter
-        )
-        Text(
-            text = "Setup your Miner",
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Current Ip: ${viewModel.getIpFromPrefs()}",
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Current ApiKey: ${viewModel.getApiKeyFromPrefs()}",
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Current Ip: ${viewModel.getIpFromPrefs()}",
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Current ApiKey: ${viewModel.getApiKeyFromPrefs()}",
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Spacer(modifier = Modifier.height(16.dp))
+        item {
+            OutlinedTextField(
+                value = ip,
+                onValueChange = { viewModel.updateIp(it) },
+                label = { Text("Miner IP or DNS") },
+                placeholder = { Text("Miner IP or DNS") },
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = apiKey,
+                onValueChange = { viewModel.updateApiKey(it) },
+                label = { Text("API Key") },
+                placeholder = { Text("API Key") },
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+        }
 
-        OutlinedTextField(
-            value = ip,
-            onValueChange = { viewModel.updateIp(it) },
-            label = { Text("Miner IP or DNS") },
-            placeholder = { Text("Miner IP or DNS") },
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = apiKey,
-            onValueChange = { viewModel.updateApiKey(it) },
-            label = { Text("API Key") },
-            placeholder = { Text("API Key") },
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = {
-                if (viewModel.isValidIpOrDomain(ip)) {
-                    viewModel.setIp(ip)
-                    viewModel.updateIp(ip)
-                    viewModel.updateApiKey(apiKey)
-                    viewModel.checkConnectivityAndSave { isConnected ->
-                        if (isConnected) {
-                            viewModel.updateIp(ip)
-                            viewModel.updateApiKey(apiKey)
-                            Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
-                            Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT)
-                                .show()
-                            val apiService = DynamicApiFactory.create(ip)
-                            Log.d("SettingsScreen", "API Service created $apiService")
-                            navController.navigate(MainRoutes.Basic.route)
-                        } else {
-                            Toast.makeText(
-                                viewModel.context,
-                                "Error ${appSettingsUiState.errorMsg}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+        item {
+            Button(
+                onClick = {
+                    if (viewModel.isValidIpOrDomain(ip)) {
+                        viewModel.setIp(ip)
+                        viewModel.updateIp(ip)
+                        viewModel.updateApiKey(apiKey)
+                        viewModel.checkConnectivityAndSave { isConnected ->
+                            if (isConnected) {
+                                viewModel.updateIp(ip)
+                                viewModel.updateApiKey(apiKey)
+                                Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
+                                Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT).show()
+                                val apiService = DynamicApiFactory.create(ip)
+                                Log.d("SettingsScreen", "API Service created $apiService")
+                                navController.navigate(MainRoutes.Basic.route)
+                            } else {
+                                Toast.makeText(
+                                    viewModel.context,
+                                    "Error ${appSettingsUiState.errorMsg}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
+                    } else {
+                        Toast.makeText(
+                            viewModel.context,
+                            "Please check a valid ip with prefix http(s)://xxx.xxx.xxx.xxx or valid domain",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                } else {
-                    Toast.makeText(
-                        viewModel.context,
-                        "Please check a valid ip with prefix http(s)://xxx.xxx.xxx.xxx or valid domain",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
-            },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Save")
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Save")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-
-            onClick = {
-                viewModel.updateIp("")
-                viewModel.updateApiKey("")
-                //viewModel.validateAndSave { isValid ->
-                //    if (isValid) {
-                //        viewModel.updateIp("")
-                //        viewModel.updateApiKey("")
-                //        Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey cleared")
-                //        val apiService = DynamicApiFactory.create(ip)
-                //        Log.d("SettingsScreen", "API Service created $apiService")
-                //    } else {
-                //        Log.e("SettingsScreen", "Error clearing IP and API Key")
-                //    }
-                //}
-            },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Clear data")
+        item {
+            Button(
+                onClick = {
+                    viewModel.updateIp("")
+                    viewModel.updateApiKey("")
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Clear data")
+            }
+            Spacer(modifier = Modifier.height(32.dp))
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = "App version: ${viewModel.getAppVersion()}",
-            modifier = Modifier.align(Alignment.End)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-
+        item {
+            Text(
+                text = "App version: ${viewModel.getAppVersion()}",
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }
