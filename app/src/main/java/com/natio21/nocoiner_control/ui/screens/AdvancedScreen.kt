@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
@@ -44,7 +45,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun AdvancedScreen(viewModel: MainViewModel) {
+fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
     val advancedState by viewModel.advancedUiState.collectAsState()
     val isDarkTheme = isSystemInDarkTheme()
     val colorFilter = if (isDarkTheme) ColorFilter.tint(Color.Gray) else null
@@ -169,7 +170,9 @@ fun AdvancedScreen(viewModel: MainViewModel) {
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
-                    onClick = { viewModel.createNewPool() },
+                    onClick = { /*viewModel.createNewPool()*/
+                        navController.navigate("edit_pools")
+                    },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(NatioOrange40),
                     modifier = Modifier.fillMaxWidth()

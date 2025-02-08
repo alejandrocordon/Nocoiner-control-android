@@ -36,3 +36,27 @@ data class ModeSettings(
     val param: Int
 )
 
+data class MiningResponse(
+    val status: String,
+    val message: String?
+)
+
+data class MetricsResponse(
+    val timezone: String,
+    val metrics: List<MetricEntry>
+)
+
+data class MetricEntry(
+    val time: Long,  // Timestamp en segundos
+    val data: HashrateData
+)
+
+data class HashrateData(
+    val hashrate: Float,
+    val pcb_max_temp: Int,
+    val chip_max_temp: Int,
+    val fan_duty: Int,
+    val power_consumption: Int
+)
+
+

@@ -2,7 +2,9 @@ package com.natio21.nocoiner_control
 
 import com.natio21.nocoiner_control.openapi.client.models.ApiKeysResponse
 import com.natio21.nocoiner_control.openapi.client.models.AntmChain
+import com.natio21.nocoiner_control.openapi.client.models.MetricsResponse
 import com.natio21.nocoiner_control.openapi.client.models.MinerStatus
+import com.natio21.nocoiner_control.openapi.client.models.MiningResponse
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
 import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
@@ -69,5 +71,32 @@ interface MinerApiService {
         @Body request: SettingsRequest
     ): SettingsResponse
 
+    @POST("api/v1/mining/pause")
+    suspend fun pauseMining(
+        @Header("x-api-key") apiKey: String,
+    ): MiningResponse
+
+    @POST("api/v1/mining/resume")
+    suspend fun resumeMining(
+        @Header("x-api-key") apiKey: String,
+    ): MiningResponse
+
+    @POST("api/v1/mining/restart")
+    suspend fun restartMining(
+        @Header("x-api-key") apiKey: String,
+    ): MiningResponse
+
+    @POST("api/v1/mining/start")
+    suspend fun startMining(
+        @Header("x-api-key") apiKey: String,
+    ): MiningResponse
+
+    @POST("api/v1/mining/stop")
+    suspend fun stopMining(
+        @Header("x-api-key") apiKey: String,
+    ): MiningResponse
+
+    @GET("api/v1/metrics")
+    suspend fun getMetrics(): MetricsResponse
 
 }   

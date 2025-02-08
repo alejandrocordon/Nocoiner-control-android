@@ -34,15 +34,18 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioRedColor40
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun BasicHeaterScreen(
     viewModel: MainViewModel,
+    navController: NavController
 ) {
     val uiState by viewModel.basicUiState.collectAsState()
     val advancedState by viewModel.advancedUiState.collectAsState()
@@ -179,7 +182,48 @@ fun BasicHeaterScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-
+            Button(
+                onClick = {
+                    Log.d("HomeScreen", "Sleep")
+                    viewModel.pauseMinnig()
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioRedColor40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Sleep",
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        "pause minning",
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = {
+                    Log.d("HomeScreen", "Sleep")
+                    viewModel.resumeMinnig()
+                },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(NatioRedColor40),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "Resume",
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        "resume minning",
+                        fontWeight = FontWeight.Normal,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
     Spacer(modifier = Modifier.height(16.dp))

@@ -37,13 +37,19 @@ fun MainScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(MainRoutes.Basic.route) {
-                BasicHeaterScreen(viewModel)
+                BasicHeaterScreen(viewModel, navController)
             }
             composable(MainRoutes.Advanced.route) {
-                AdvancedScreen(viewModel)
+                AdvancedScreen(viewModel, navController)
             }
             composable(MainRoutes.Settings.route) {
                 SettingsScreen(viewModel, navController)
+            }
+            composable(MainRoutes.EditPools.route) {
+                EditPoolsScreen(viewModel, navController)
+            }
+            composable(MainRoutes.Scheduler.route) {
+                SchedulerScreen(viewModel, navController)
             }
         }
     }
@@ -82,4 +88,6 @@ sealed class MainRoutes(val route: String, val label: String) {
     object Basic : MainRoutes("basic", "Básico")
     object Advanced : MainRoutes("advanced", "Avanzado")
     object Settings : MainRoutes("settings", "Ajustes")
+    object EditPools : MainRoutes("edit_pools", "Pools")
+    object Scheduler : MainRoutes("scheduler", "Scheduler")
 }

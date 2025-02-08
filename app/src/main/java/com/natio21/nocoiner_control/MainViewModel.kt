@@ -10,6 +10,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
@@ -46,6 +48,24 @@ class MainViewModel @Inject constructor(
     val appSettingsUiState: StateFlow<AppSettingsUiState> = _appSettingsUiState
     val basicUiState: StateFlow<BasicUiState> = _basicUiState
     val advancedUiState: StateFlow<AdvancedUiState> = _advancedUiState
+
+    //Metrics
+    private val _metrics = MutableLiveData<List<Pair<Long, Float>>>()
+    val metrics: LiveData<List<Pair<Long, Float>>> get() = _metrics
+
+    private val _showEditPoolsDialog = MutableStateFlow(false)
+    val showEditPoolsDialog: StateFlow<Boolean> = _showEditPoolsDialog
+
+
+    //Pools
+    private val _poolsData = MutableStateFlow(List(4) { PoolData("", "") })
+    val poolsData: StateFlow<List<PoolData>> = _poolsData
+
+    data class PoolData(val url: String, val port: String)
+
+
+
+
 
     var ip = mutableStateOf("")
     var apiKey = mutableStateOf("")
@@ -84,6 +104,19 @@ class MainViewModel @Inject constructor(
        //// Si quieres, podrías “pingear” automáticamente para comprobar que el servidor responde:
        //checkServer()
     }
+
+
+
+    fun toggleEditPoolsDialog(show: Boolean) {
+        _showEditPoolsDialog.value = show
+    }
+
+    fun updatePoolData(index: Int, url: String, port: String) {
+        _poolsData.value = _poolsData.value.toMutableList().apply {
+            this[index] = PoolData(url, port)
+        }
+    }
+
 
     fun updateApiKey(newApiKey: String) {
         Log.d("MainViewModel", "apiKey oldApiKey: ${minerPrefs.getApiKey()} newApiKey: $newApiKey")
@@ -169,6 +202,73 @@ class MainViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    fun pauseMinnig() {
+        Log.d("MainViewModel", "setToSleep: ${ip.value} ${apiKey.value}")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _basicUiState.update { it.copy(isLoading = true) }
+            try {
+                val settingsResponse = minerApiService?.pauseMining(
+                    minerPrefs.getApiKey().toString(),
+                )
+                Log.d("MainViewModel", "setToSleep: $settingsResponse")
+            } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
+                _basicUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = "Error al poner a sleep: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+                    )
+                }
+            }
+        }
+    }
+
+    fun resumeMinnig() {
+        Log.d("MainViewModel", "setToSleep: ${ip.value} ${apiKey.value}")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _basicUiState.update { it.copy(isLoading = true) }
+            try {
+                val settingsResponse = minerApiService?.resumeMining(
+                    minerPrefs.getApiKey().toString(),
+                )
+                Log.d("MainViewModel", "setToSleep: $settingsResponse")
+            } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
+                _basicUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = "Error al poner a sleep: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+                    )
+                }
+            }
+        }
+    }
+
+    fun getHashrateHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _advancedUiState.update { it.copy(isLoading = true) }
+            //try {
+            //    val hashrateHistory = minerApiService?.getMinerInfo().miner.getHashrateHistory(minerPrefs.getApiKey().toString())
+            //    _advancedUiState.update {
+            //        it.copy(
+            //            hashrateHistory = hashrateHistory,
+            //            isLoading = false
+            //        )
+            //    }
+            //} catch (e: Exception) {
+            //    FirebaseCrashlytics.getInstance().recordException(e)
+            //    _advancedUiState.update {
+            //        it.copy(
+            //            isLoading = false,
+            //            errorMsg = "Error al consultar el histórico de hashrate: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+            //        )
+            //    }
+            //}
         }
     }
 
