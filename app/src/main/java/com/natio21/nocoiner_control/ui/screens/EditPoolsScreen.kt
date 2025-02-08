@@ -1,5 +1,6 @@
 package com.natio21.nocoiner_control.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -31,8 +32,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
-    val advancedState by viewModel.advancedUiState.collectAsState()
-    val poolsData by viewModel.poolsData.collectAsState()
+    val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -44,6 +44,7 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
         item {
             DisposableEffect(Unit) {
                 val job = viewModel.viewModelScope.launch {
+
                     viewModel.getSummary()
                 }
                 onDispose {
@@ -54,12 +55,26 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        val poolsInfo: List<List<String>> = advancedState.summary?.miner?.pools?.map { pool ->
-            listOf(pool.url, pool.pool_type, pool.status, pool.ping.toString())
-        } ?: emptyList()
 
 
-        items(poolsData) { pool ->
+        /*items(pools) { pool ->
+            /*
+            * val id: Int,
+              val url: String,
+              val pool_type: String,
+              val user: String,
+              val status: String,
+              val asic_boost: Boolean,
+              val diff: String,
+              val accepted: Int,
+              val rejected: Int,
+              val stale: Int,
+              val ls_diff: Int,
+              val ls_time: String,
+              val diffa: Long,
+              val ping: Int
+            * */
+
             OutlinedTextField(
                 value = pool.url,
                 onValueChange = {
@@ -69,20 +84,26 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
                     //    pool.port
                     //)
                 },
-                label = { Text("Pool URL ${poolsData.indexOf(pool) + 1}") },
+                label = { Text("Pool URL ${pools.indexOf(pool) + 1}") },
                 placeholder = { Text("Enter Pool URL") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = pool.port,
-                onValueChange = { /*viewModel.updatePoolData(poolsData.indexOf(pool), pool.url, it)*/ },
-                label = { Text("Pool Port ${poolsData.indexOf(pool) + 1}") },
-                placeholder = { Text("Enter Pool Port") },
+                value = pool.worker,
+                onValueChange = {
+                    //viewModel.updatePoolData(
+                    //    poolsData.indexOf(pool),
+                    //    it,
+                    //    pool.port
+                    //)
+                },
+                label = { Text("Pool URL ${pools.indexOf(pool) + 1}") },
+                placeholder = { Text("Enter Pool URL") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+            Spacer(modifier = Modifier.height(32.dp))
+        }*/
 
         item {
             Button(

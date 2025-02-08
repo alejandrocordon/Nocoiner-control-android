@@ -20,7 +20,8 @@ data class SettingsRequest(
 
 @JsonClass(generateAdapter = true)
 data class MinerSettings(
-    val cooling: CoolingSettings
+    val cooling: CoolingSettings,
+    val pools: PoolsSettings
 )
 
 @JsonClass(generateAdapter = true)
@@ -28,6 +29,13 @@ data class CoolingSettings(
     val mode: ModeSettings,
     val fan_min_count: Int,
     val fan_min_duty: Int
+)
+
+@JsonClass(generateAdapter = true)
+data class PoolsSettings(
+    val url: String,
+    val user: String,
+    val pass: String
 )
 
 @JsonClass(generateAdapter = true)

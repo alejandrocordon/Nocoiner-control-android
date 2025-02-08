@@ -20,6 +20,7 @@ import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
+import com.natio21.nocoiner_control.openapi.client.models.PoolsSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
@@ -79,7 +80,8 @@ fun HomeScreen(
                                     mode = ModeSettings(name = "auto", param = 80),
                                     fan_min_count = 4,
                                     fan_min_duty = 10
-                                )
+                                ),
+                                pools = PoolsSettings(url = "", user = "", pass = "")
                             )
                         )
                         settingsResponse = minerApiService.updateSettings(
@@ -111,7 +113,8 @@ fun HomeScreen(
                                     mode = ModeSettings(name = "auto", param = 70),
                                     fan_min_count = 4,
                                     fan_min_duty = 10
-                                )
+                                ),
+                                pools = PoolsSettings(url = "", user = "", pass = "")
                             )
                         )
                         val settingsResponse = minerApiService.updateSettings(
@@ -143,7 +146,8 @@ fun HomeScreen(
                                     mode = ModeSettings(name = "auto", param = 65),
                                     fan_min_count = 4,
                                     fan_min_duty = 10
-                                )
+                                ),
+                                pools = PoolsSettings(url = "", user = "", pass = "")
                             )
                         )
                         val settingsResponse = minerApiService.updateSettings(

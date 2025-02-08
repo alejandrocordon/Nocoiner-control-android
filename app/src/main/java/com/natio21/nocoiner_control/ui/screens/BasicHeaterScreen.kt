@@ -37,6 +37,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
+import com.natio21.nocoiner_control.ui.theme.NatioGreenColor40
+import com.natio21.nocoiner_control.ui.theme.NatioGreenColor80
 import com.natio21.nocoiner_control.ui.theme.NatioOrange40
 import com.natio21.nocoiner_control.ui.theme.NatioRedColor40
 import kotlinx.coroutines.delay
@@ -184,7 +186,6 @@ fun BasicHeaterScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    Log.d("HomeScreen", "Sleep")
                     viewModel.pauseMinnig()
                 },
                 shape = RoundedCornerShape(8.dp),
@@ -205,11 +206,10 @@ fun BasicHeaterScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    Log.d("HomeScreen", "Sleep")
                     viewModel.resumeMinnig()
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioRedColor40),
+                colors = ButtonDefaults.buttonColors(NatioGreenColor80),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -227,78 +227,4 @@ fun BasicHeaterScreen(
         }
     }
     Spacer(modifier = Modifier.height(16.dp))
-
-
-    //Row {
-    //    IconButton(onClick = {
-    //        // Lógica para bajar
-    //        viewModel.changeTemperature(uiState.currentTemperature - 1)
-    //    }) {
-    //        Icon(Icons.Default.Delete, contentDescription = "Decrease")
-    //    }
-    //    IconButton(onClick = {
-    //        // Lógica para subir
-    //        viewModel.changeTemperature(uiState.currentTemperature + 1)
-    //    }) {
-    //        Icon(Icons.Default.Add, contentDescription = "Increase")
-    //    }
-    //}
-//
-    //OutlinedTextField(
-    //    value = uiState.timerMinutes.toString(),
-    //    onValueChange = { newValue ->
-    //        // Manejo de conversion a Int
-    //        viewModel.updateTimer(newValue.toIntOrNull() ?: 0)
-    //    },
-    //    label = { Text("Timer (minutes)") }
-    //)
-//
-    //Button(
-    //    onClick = {
-    //        viewModel.startTimer {
-    //            // al finalizar, puedes mostrar un snackbar o algo
-    //        }
-    //    }
-    //) {
-    //    Text("Start Timer")
-    //}
-
-
-    // Manejo de snackbars
-    //if (uiState.showSuccessMessage) {
-    //    // Ejemplo con SnackbarHost
-    //    SnackbarHost(
-    //        hostState = remember { SnackbarHostState() },
-    //        snackbar = {
-    //            Snackbar {
-    //                Text("Temperature Updated!")
-    //            }
-    //        }
-    //    )
-    //}
-
-    // Manejo de diálogos de error
-    //if (uiState.errorMsg != null) {
-    //    AlertDialog(
-    //        onDismissRequest = { viewModel.clearError() },
-    //        title = { Text("Error") },
-    //        text = { Text(uiState.errorMsg!!) },
-    //        confirmButton = {
-    //            TextButton(onClick = { viewModel.clearError() }) {
-    //                Text("OK")
-    //            }
-    //        }
-    //    )
-    //}
-    //if (uiState.showSuccessMessage) {
-    //    SnackbarHost(
-    //        hostState = remember { SnackbarHostState() },
-    //        snackbar = {
-    //            Snackbar {
-    //                Text("Temperature Updated!")
-    //            }
-    //        }
-    //    )
-    //}
-
 }

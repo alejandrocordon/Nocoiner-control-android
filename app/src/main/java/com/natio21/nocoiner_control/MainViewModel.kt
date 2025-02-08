@@ -17,7 +17,9 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
+import com.natio21.nocoiner_control.openapi.client.models.PoolsSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
+import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
 import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -136,29 +138,11 @@ class MainViewModel @Inject constructor(
 
     fun getSettings() {
         viewModelScope.launch(Dispatchers.IO) {
-            _basicUiState.update { it.copy(isLoading = true) }
             try {
                 val settingsResponse =
                     minerApiService?.getSettings(minerPrefs.getApiKey().toString())
-                //_settingsResponse.postValue(settingsResponse)
-                _basicUiState.update {
-                    it.copy(
-                        currentTemperature = settingsResponse!!.miner.cooling.mode.param,
-                        isLoading = false,
-                        showSuccessMessage = true,
-                        errorMsg = null,
-                        timerMinutes = 0
-                    )
-                }
             } catch (e: Exception) {
-                //_settingsResponse.postValue(null)
                 FirebaseCrashlytics.getInstance().recordException(e)
-                _basicUiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMsg = "Error al consultar settings: ${e.message}"
-                    )
-                }
             }
         }
     }
@@ -178,7 +162,8 @@ class MainViewModel @Inject constructor(
                             mode = ModeSettings(name = "auto", param = newTemp),
                             fan_min_count = 4,
                             fan_min_duty = 10
-                        )
+                        ),
+                        pools = PoolsSettings(url = "", user = "", pass = "")
                     )
                 )
                 val settingsResponse = minerApiService?.updateSettings(
@@ -400,10 +385,10 @@ class MainViewModel @Inject constructor(
     }
 
     // Advanced
-    fun editPool(pool: Pool) { /* ... */
+    fun editPool(pool: PoolSummary) { /* ... */
     }
 
-    fun deletePool(pool: Pool) { /* ... */
+    fun deletePool(pool: PoolSummary) { /* ... */
     }
 
     fun createNewPool() { /* ... */
@@ -452,7 +437,7 @@ data class BasicUiState(
 
 data class AdvancedUiState(
     val minerIp: String = "",
-    val pools: List<Pool> = emptyList(),
+    val pools: List<PoolSummary> = emptyList(),
     val hashrate: String = "", // Ej: “56 MH/s”
     var isLoading: Boolean = false,
     var errorMsg: String? = null,
@@ -467,7 +452,7 @@ data class AppSettingsUiState(
     var errorMsg: String? = null
 )
 
-data class Pool(
+data class PoolSummary(
     val url: String,
     val priority: Int = 0,
     val status: String = "",
