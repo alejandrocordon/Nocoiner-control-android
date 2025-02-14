@@ -23,7 +23,7 @@ import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
 import com.natio21.nocoiner_control.openapi.client.models.PoolsSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
-import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioOrange44
 import kotlinx.coroutines.launch
 
 @Composable
@@ -96,7 +96,7 @@ fun HomeScreen(
                 }
             },
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            colors = ButtonDefaults.buttonColors(NatioOrange44),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(id = R.string.max_temperature))
@@ -129,7 +129,7 @@ fun HomeScreen(
                 }
             },
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            colors = ButtonDefaults.buttonColors(NatioOrange44),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(id = R.string.medium_temperature))
@@ -162,7 +162,7 @@ fun HomeScreen(
                 }
             },
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            colors = ButtonDefaults.buttonColors(NatioOrange44),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(stringResource(id = R.string.min_temperature))

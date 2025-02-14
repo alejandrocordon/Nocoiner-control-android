@@ -38,7 +38,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
-import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -174,19 +174,19 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
                         navController.navigate("edit_pools")
                     },
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(NatioOrange40),
+                    colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Add Pool")
+                    Text("Add Pool",color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(
                     onClick = { viewModel.openMinerWeb() },
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(NatioOrange40),
+                    colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Go to Miner Web")
+                    Text("Go to Miner Web",color = Color.White)
                 }
             }
         }
@@ -247,7 +247,7 @@ fun MatrixDashboardCard(title: String, dataMatrix: List<List<String>>) {
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
                                 .weight(1f)
-                                .wrapContentWidth(Alignment.Start)
+                                .wrapContentWidth(Alignment.Start),
                         )
                     }
                     repeat(longestRowSize - rowItems.size) {

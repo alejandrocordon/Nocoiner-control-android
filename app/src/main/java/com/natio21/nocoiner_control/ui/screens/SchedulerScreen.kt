@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
-import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioOrange44
 
 @Composable
 fun SchedulerScreen(viewModel: MainViewModel, navController: NavController) {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,8 +31,9 @@ import androidx.navigation.NavController
 import com.natio21.nocoiner_control.DynamicApiFactory
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
-import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
@@ -39,7 +41,8 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
     val apiKey by viewModel.apiKey
     val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
     val isDarkTheme = isSystemInDarkTheme()
-    val colorFilter = if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
+    val colorFilter =
+        if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -65,16 +68,29 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
 
         item {
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Current Ip: ${viewModel.getIpFromPrefs()}",
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Current ApiKey: ${viewModel.getApiKeyFromPrefs()}",
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+                Text(
+                    text = "Current Ip: ${viewModel.getIpFromPrefs()}",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Current ApiKey:",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Text(
+                    text = "${viewModel.getApiKeyFromPrefs()}",
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+            }
         }
 
         item {
@@ -106,7 +122,11 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
                                 viewModel.updateIp(ip)
                                 viewModel.updateApiKey(apiKey)
                                 Log.d("SettingsScreen", "IP: $ip and API Key: $apiKey saved")
-                                Toast.makeText(viewModel.context, "Settings saved", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    viewModel.context,
+                                    "Settings saved",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 val apiService = DynamicApiFactory.create(ip)
                                 Log.d("SettingsScreen", "API Service created $apiService")
                                 navController.navigate(MainRoutes.Basic.route)
@@ -127,10 +147,10 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
                     }
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Save")
+                Text("Save", color = Color.White)
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -142,10 +162,10 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
                     viewModel.updateApiKey("")
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Clear data")
+                Text("Clear data", color = Color.White)
             }
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -153,6 +173,7 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         item {
             Text(
                 text = "App version: ${viewModel.getAppVersion()}",
+                color = Color.White
             )
             Spacer(modifier = Modifier.height(16.dp))
         }

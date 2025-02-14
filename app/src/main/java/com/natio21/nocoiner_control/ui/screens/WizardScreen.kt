@@ -23,13 +23,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.natio21.nocoiner_control.DynamicApiFactory
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
-import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 
 @Composable
 fun WizardScreen(
@@ -125,10 +126,10 @@ fun WizardScreen(
                 }
             },
             shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(NatioOrange40),
+            colors = ButtonDefaults.buttonColors(NatioOrangeDD),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Save")
+            Text("Save",color = Color.White)
         }
 
         Spacer(modifier = Modifier.height(16.dp))

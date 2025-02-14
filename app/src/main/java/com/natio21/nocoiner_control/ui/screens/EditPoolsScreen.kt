@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
-import com.natio21.nocoiner_control.ui.theme.NatioOrange40
+import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.DisposableEffect
@@ -112,7 +112,7 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
                     navController.popBackStack()
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Save")
@@ -121,7 +121,7 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
             Button(
                 onClick = { navController.popBackStack() },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Cancel")

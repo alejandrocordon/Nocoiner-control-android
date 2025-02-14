@@ -37,10 +37,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
-import com.natio21.nocoiner_control.ui.theme.NatioGreenColor40
-import com.natio21.nocoiner_control.ui.theme.NatioGreenColor80
-import com.natio21.nocoiner_control.ui.theme.NatioOrange40
-import com.natio21.nocoiner_control.ui.theme.NatioRedColor40
+import com.natio21.nocoiner_control.ui.theme.NatioOrange44
+import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -98,7 +96,7 @@ fun BasicHeaterScreen(
             Text(
                 text = buildAnnotatedString {
                     append("Hashrate: ")
-                    withStyle(style = SpanStyle(fontSize = 24.sp, color = NatioOrange40)) {
+                    withStyle(style = SpanStyle(fontSize = 24.sp, color = NatioOrangeDD)) {
                         append("$hashrate TH/s")
                     }
                 },
@@ -112,7 +110,7 @@ fun BasicHeaterScreen(
             Text(
                 text = buildAnnotatedString {
                     append("Temperatura del chip: ")
-                    withStyle(style = SpanStyle(fontSize = 24.sp, color = NatioOrange40)) {
+                    withStyle(style = SpanStyle(fontSize = 24.sp, color = NatioOrangeDD)) {
                         append("$temperatureInfo ºC")
                     }
                 },
@@ -127,17 +125,19 @@ fun BasicHeaterScreen(
                     viewModel.setTemperature(80)
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "Modo calefacción",
                         fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                     Text(
                         "Temperatura del chip 80ºC",
                         fontWeight = FontWeight.Normal,
+                        color = Color.White
                     )
                 }
             }
@@ -148,17 +148,19 @@ fun BasicHeaterScreen(
                     viewModel.setTemperature(72)
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "Modo intermedio",
                         fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                     Text(
                         "Temperatura del chip 72ºC",
                         fontWeight = FontWeight.Normal,
+                        color = Color.White
                     )
                 }
             }
@@ -169,17 +171,19 @@ fun BasicHeaterScreen(
                     viewModel.setTemperature(65)
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioOrange40),
+                colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "Modo eficiencia",
                         fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                     Text(
                         "Temperatura del chip 65ºC",
                         fontWeight = FontWeight.Normal,
+                        color = Color.White
                     )
                 }
             }
@@ -189,17 +193,19 @@ fun BasicHeaterScreen(
                     viewModel.pauseMinnig()
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioRedColor40),
+                colors = ButtonDefaults.buttonColors(NatioOrange44),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "Sleep",
                         fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                     Text(
                         "pause minning",
                         fontWeight = FontWeight.Normal,
+                        color = Color.White
                     )
                 }
             }
@@ -209,17 +215,19 @@ fun BasicHeaterScreen(
                     viewModel.resumeMinnig()
                 },
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(NatioGreenColor80),
+                colors = ButtonDefaults.buttonColors(NatioOrange44),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "Resume",
                         fontWeight = FontWeight.Bold,
+                        color = Color.White
                     )
                     Text(
                         "resume minning",
                         fontWeight = FontWeight.Normal,
+                        color = Color.White
                     )
                 }
             }
