@@ -173,7 +173,7 @@ fun SettingsScreen(viewModel: MainViewModel, navController: NavController) {
         item {
             Text(
                 text = "App version: ${viewModel.getAppVersion()}",
-                color = Color.White
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.height(16.dp))
         }

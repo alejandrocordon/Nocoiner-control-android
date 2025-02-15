@@ -57,7 +57,7 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
                     job.cancel()
                 }
             }
-            Text(text = "Edit Pools", style = MaterialTheme.typography.titleLarge)
+            Text(text = "Edit Pools", style = MaterialTheme.typography.titleLarge,color = MaterialTheme.colorScheme.onBackground)
             Spacer(modifier = Modifier.height(16.dp))
         }
 
