@@ -175,9 +175,9 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
                     colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Add Pool",color = Color.White)
+                    Text("Edit Pool",color = Color.White)
                 }
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = { viewModel.openMinerWeb() },
                     shape = RoundedCornerShape(8.dp),

@@ -26,9 +26,11 @@ import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
+import com.natio21.nocoiner_control.ui.theme.NatioGrey88
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -60,35 +62,32 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
         }
 
 
-        //show all pools with item(pools)
-        item {
-            Text(text = "Pools", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
         items(pools) { pool ->
             OutlinedTextField(
                 value = pool.url,
                 onValueChange = {  },
-                //label text url with number of pool
                 label = { Text("URL ${pools.indexOf(pool)}") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = pool.user,
                 onValueChange = {  },
                 label = { Text("User ${pools.indexOf(pool)}") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = pool.pass,
                 onValueChange = { },
                 label = { Text("Pass ${pools.indexOf(pool)}") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+            HorizontalDivider(color = NatioGrey88, thickness = 2.dp)
+            Spacer(modifier = Modifier.height(12.dp))
+            //Line separator
+
         }
 
         item {
@@ -103,7 +102,7 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
             ) {
                 Text("Save",color = Color.White)
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Button(
                 onClick = { navController.popBackStack() },
                 shape = RoundedCornerShape(8.dp),
@@ -112,6 +111,7 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
             ) {
                 Text("Cancel",color = Color.White)
             }
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
