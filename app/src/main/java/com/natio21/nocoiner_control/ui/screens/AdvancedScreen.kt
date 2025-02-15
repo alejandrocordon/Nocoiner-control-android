@@ -62,7 +62,7 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
                     val job = viewModel.viewModelScope.launch {
                         while (true) {
                             viewModel.getSummaryAndSettings()
-                            delay(5000)
+                            delay(20000)
                         }
                     }
                     onDispose {

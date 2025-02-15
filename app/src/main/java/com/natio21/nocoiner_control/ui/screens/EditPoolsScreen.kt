@@ -86,8 +86,6 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
             Spacer(modifier = Modifier.height(4.dp))
             HorizontalDivider(color = NatioGrey88, thickness = 2.dp)
             Spacer(modifier = Modifier.height(12.dp))
-            //Line separator
-
         }
 
         item {
