@@ -34,7 +34,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
-    val appSettingsUiState by viewModel.appSettingsUiState.collectAsState()
+    val advancedState by viewModel.advancedUiState.collectAsState()
+    val pools = advancedState.settings?.miner?.pools ?: emptyList()
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -48,65 +49,47 @@ fun EditPoolsScreen(viewModel: MainViewModel, navController: NavController) {
             DisposableEffect(Unit) {
                 val job = viewModel.viewModelScope.launch {
 
-                    viewModel.getSummary()
+                    viewModel.getSummaryAndSettings()
                 }
                 onDispose {
                     job.cancel()
                 }
             }
-            Text(text = "Edit Pools", style = MaterialTheme.typography.titleLarge, color = Color.White)
+            Text(text = "Edit Pools", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(16.dp))
         }
 
 
+        //show all pools with item(pools)
+        item {
+            Text(text = "Pools", style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
-        /*items(pools) { pool ->
-            /*
-            * val id: Int,
-              val url: String,
-              val pool_type: String,
-              val user: String,
-              val status: String,
-              val asic_boost: Boolean,
-              val diff: String,
-              val accepted: Int,
-              val rejected: Int,
-              val stale: Int,
-              val ls_diff: Int,
-              val ls_time: String,
-              val diffa: Long,
-              val ping: Int
-            * */
-
+        items(pools) { pool ->
             OutlinedTextField(
                 value = pool.url,
-                onValueChange = {
-                    //viewModel.updatePoolData(
-                    //    poolsData.indexOf(pool),
-                    //    it,
-                    //    pool.port
-                    //)
-                },
-                label = { Text("Pool URL ${pools.indexOf(pool) + 1}") },
-                placeholder = { Text("Enter Pool URL") },
+                onValueChange = {  },
+                //label text url with number of pool
+                label = { Text("URL ${pools.indexOf(pool)}") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = pool.worker,
-                onValueChange = {
-                    //viewModel.updatePoolData(
-                    //    poolsData.indexOf(pool),
-                    //    it,
-                    //    pool.port
-                    //)
-                },
-                label = { Text("Pool URL ${pools.indexOf(pool) + 1}") },
-                placeholder = { Text("Enter Pool URL") },
+                value = pool.user,
+                onValueChange = {  },
+                label = { Text("User ${pools.indexOf(pool)}") },
                 modifier = Modifier.fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(32.dp))
-        }*/
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = pool.pass,
+                onValueChange = { },
+                label = { Text("Pass ${pools.indexOf(pool)}") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         item {
             Button(

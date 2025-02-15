@@ -66,7 +66,7 @@ fun BasicHeaterScreen(
             DisposableEffect(Unit) {
                 val job = viewModel.viewModelScope.launch {
                     while (true) {
-                        viewModel.getSummary()
+                        viewModel.getSummaryAndSettings()
                         delay(5000)
                     }
                 }

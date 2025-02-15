@@ -16,10 +16,13 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
+import com.natio21.nocoiner_control.openapi.client.models.MinerSettingsCooling
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
 import com.natio21.nocoiner_control.openapi.client.models.PoolsSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
+import com.natio21.nocoiner_control.openapi.client.models.SettingsRequestCooling
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
+import com.natio21.nocoiner_control.openapi.client.models.SummaryPool
 import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -156,17 +159,17 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _basicUiState.update { it.copy(isLoading = true) }
             try {
-                val settingsRequest = SettingsRequest(
-                    miner = MinerSettings(
+                val settingsRequest = SettingsRequestCooling(
+                    miner = MinerSettingsCooling(
                         cooling = CoolingSettings(
                             mode = ModeSettings(name = "auto", param = newTemp),
                             fan_min_count = 4,
-                            fan_min_duty = 10
-                        ),
-                        pools = PoolsSettings(url = "", user = "", pass = "")
+                            fan_min_duty = 10,
+                            fan_max_duty = 100
+                        )
                     )
                 )
-                val settingsResponse = minerApiService?.updateSettings(
+                val settingsResponse = minerApiService?.updateSettingsCooling(
                     minerPrefs.getApiKey().toString(),
                     settingsRequest
                 )
@@ -285,7 +288,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getSummary() {
+    fun getSummaryAndSettings() {
         Log.d("MainViewModel", "getSummary: ${ip.value} ${apiKey.value}")
         Log.d("MainViewModel", "getSummary: ${appSettingsUiState.value.ip} ${appSettingsUiState.value.apiKey}")
         Log.d("MainViewModel", "getSummary: ${minerPrefs.getIp()} ${minerPrefs.getApiKey()}")
@@ -294,10 +297,12 @@ class MainViewModel @Inject constructor(
             _advancedUiState.update { it.copy(isLoading = true) }
             try {
                 val summary = minerApiService?.getSummary(minerPrefs.getApiKey().toString())
+                val settings = minerApiService?.getSettings(minerPrefs.getApiKey().toString())
                 _advancedUiState.update {
                     it.copy(
                         summary = summary,
-                        isLoading = false
+                        settings = settings,
+                        isLoading = false,
                     )
                 }
             } catch (e: Exception) {
@@ -437,11 +442,11 @@ data class BasicUiState(
 
 data class AdvancedUiState(
     val minerIp: String = "",
-    val pools: List<PoolSummary> = emptyList(),
     val hashrate: String = "", // Ej: “56 MH/s”
     var isLoading: Boolean = false,
     var errorMsg: String? = null,
-    var summary: SummaryResponse? = null
+    var summary: SummaryResponse? = null,
+    var settings: SettingsResponse? = null
 )
 
 data class AppSettingsUiState(

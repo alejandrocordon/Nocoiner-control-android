@@ -6,6 +6,7 @@ import com.natio21.nocoiner_control.openapi.client.models.MetricsResponse
 import com.natio21.nocoiner_control.openapi.client.models.MinerStatus
 import com.natio21.nocoiner_control.openapi.client.models.MiningResponse
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
+import com.natio21.nocoiner_control.openapi.client.models.SettingsRequestCooling
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
 import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import com.natio21.nocoiner_control.openapi.client.models.TempSensor
@@ -64,6 +65,12 @@ interface MinerApiService {
     suspend fun unlockMiner(
         @Body request: UnlockRequest
     ): UnlockResponse
+
+    @POST("api/v1/settings")
+    suspend fun updateSettingsCooling(
+        @Header("x-api-key") apiKey: String,
+        @Body request: SettingsRequestCooling
+    ): SettingsResponse
 
     @POST("api/v1/settings")
     suspend fun updateSettings(

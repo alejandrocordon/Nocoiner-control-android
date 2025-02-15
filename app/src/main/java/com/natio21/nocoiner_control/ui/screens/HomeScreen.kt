@@ -19,9 +19,11 @@ import com.natio21.nocoiner_control.MinerApiService
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
+import com.natio21.nocoiner_control.openapi.client.models.MinerSettingsCooling
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
 import com.natio21.nocoiner_control.openapi.client.models.PoolsSettings
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
+import com.natio21.nocoiner_control.openapi.client.models.SettingsRequestCooling
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
 import com.natio21.nocoiner_control.ui.theme.NatioOrange44
 import kotlinx.coroutines.launch
@@ -74,17 +76,17 @@ fun HomeScreen(
                 Log.d("HomeScreen", "Temperatura al maximo 80ºC")
                 lifecycleScope.launch {
                     try {
-                        val settingsRequest = SettingsRequest(
-                            miner = MinerSettings(
+                        val settingsRequest = SettingsRequestCooling(
+                            miner = MinerSettingsCooling(
                                 cooling = CoolingSettings(
                                     mode = ModeSettings(name = "auto", param = 80),
                                     fan_min_count = 4,
-                                    fan_min_duty = 10
+                                    fan_min_duty = 10,
+                                    fan_max_duty = 100
                                 ),
-                                pools = PoolsSettings(url = "", user = "", pass = "")
                             )
                         )
-                        settingsResponse = minerApiService.updateSettings(
+                        settingsResponse = minerApiService.updateSettingsCooling(
                             apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
                             request = settingsRequest
                         )
@@ -107,17 +109,17 @@ fun HomeScreen(
                 Log.d("HomeScreen", "Temperatura al maximo 70ºC")
                 lifecycleScope.launch {
                     try {
-                        val settingsRequest = SettingsRequest(
-                            miner = MinerSettings(
+                        val settingsRequest = SettingsRequestCooling(
+                            miner = MinerSettingsCooling(
                                 cooling = CoolingSettings(
                                     mode = ModeSettings(name = "auto", param = 70),
                                     fan_min_count = 4,
-                                    fan_min_duty = 10
-                                ),
-                                pools = PoolsSettings(url = "", user = "", pass = "")
+                                    fan_min_duty = 10,
+                                    fan_max_duty = 100
+                                )
                             )
                         )
-                        val settingsResponse = minerApiService.updateSettings(
+                        val settingsResponse = minerApiService.updateSettingsCooling(
                             apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
                             request = settingsRequest
                         )
@@ -140,17 +142,17 @@ fun HomeScreen(
                 Log.d("HomeScreen", "Temperatura al minimo 65ºC")
                 lifecycleScope.launch {
                     try {
-                        val settingsRequest = SettingsRequest(
-                            miner = MinerSettings(
+                        val settingsRequest = SettingsRequestCooling(
+                            miner = MinerSettingsCooling(
                                 cooling = CoolingSettings(
                                     mode = ModeSettings(name = "auto", param = 65),
                                     fan_min_count = 4,
-                                    fan_min_duty = 10
-                                ),
-                                pools = PoolsSettings(url = "", user = "", pass = "")
+                                    fan_min_duty = 10,
+                                    fan_max_duty = 100
+                                )
                             )
                         )
-                        val settingsResponse = minerApiService.updateSettings(
+                        val settingsResponse = minerApiService.updateSettingsCooling(
                             apiKey = "asdfasdfasdfasdfasdfasdfasdfabtc",
                             request = settingsRequest
                         )
