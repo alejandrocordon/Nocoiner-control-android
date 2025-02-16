@@ -41,6 +41,9 @@ import com.natio21.nocoiner_control.ui.theme.NatioOrange44
 import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun BasicHeaterScreen(
@@ -51,6 +54,7 @@ fun BasicHeaterScreen(
     val advancedState by viewModel.advancedUiState.collectAsState()
     val isDarkTheme = isSystemInDarkTheme()
     val colorFilter = if (isDarkTheme) ColorFilter.tint(Color.Gray) else null
+    val metrics = uiState.metrics
 
     viewModel.init()
 
@@ -67,6 +71,7 @@ fun BasicHeaterScreen(
                 val job = viewModel.viewModelScope.launch {
                     while (true) {
                         viewModel.getSummaryAndSettings()
+                        viewModel.getMetrics1_15()
                         delay(15000)
                     }
                 }
@@ -232,7 +237,34 @@ fun BasicHeaterScreen(
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
         }
+
+        fun convertUnixTimeToReadable(unixTime: Long): String {
+            val instant = Instant.ofEpochSecond(unixTime)
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                .withZone(ZoneId.systemDefault())
+            return formatter.format(instant)
+        }
+
+        metrics?.let {
+            for (metric in it) {
+                item {
+                    Text(
+                        text = buildAnnotatedString {
+                            append("Hashrate ${metric.data.hashrate}: ")
+                            withStyle(style = SpanStyle(fontSize = 10.sp, color = NatioOrangeDD)) {
+                                append("${convertUnixTimeToReadable(metric.time)} TH/s")
+                            }
+                        },
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+        }
+
     }
-    Spacer(modifier = Modifier.height(16.dp))
 }

@@ -77,10 +77,10 @@ data class MetricsResponse(
 
 data class MetricEntry(
     val time: Long,  // Timestamp en segundos
-    val data: HashrateData
+    val data: MetricData
 )
 
-data class HashrateData(
+data class MetricData(
     val hashrate: Float,
     val pcb_max_temp: Int,
     val chip_max_temp: Int,

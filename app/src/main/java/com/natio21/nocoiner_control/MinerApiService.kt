@@ -103,7 +103,7 @@ interface MinerApiService {
         @Header("x-api-key") apiKey: String,
     ): MiningResponse
 
-    @GET("api/v1/metrics")
-    suspend fun getMetrics(): MetricsResponse
+    @GET("api/v1/metrics?time_slice=1&step=15")
+    suspend fun getMetrics1_15(): MetricsResponse
 
 }   

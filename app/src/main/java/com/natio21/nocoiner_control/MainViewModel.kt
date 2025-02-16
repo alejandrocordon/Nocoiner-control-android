@@ -15,14 +15,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.natio21.nocoiner_control.openapi.client.models.CoolingSettings
-import com.natio21.nocoiner_control.openapi.client.models.MinerSettings
+import com.natio21.nocoiner_control.openapi.client.models.MetricEntry
+import com.natio21.nocoiner_control.openapi.client.models.MetricsResponse
 import com.natio21.nocoiner_control.openapi.client.models.MinerSettingsCooling
 import com.natio21.nocoiner_control.openapi.client.models.ModeSettings
-import com.natio21.nocoiner_control.openapi.client.models.PoolsSettings
-import com.natio21.nocoiner_control.openapi.client.models.SettingsRequest
 import com.natio21.nocoiner_control.openapi.client.models.SettingsRequestCooling
 import com.natio21.nocoiner_control.openapi.client.models.SettingsResponse
-import com.natio21.nocoiner_control.openapi.client.models.SummaryPool
 import com.natio21.nocoiner_control.openapi.client.models.SummaryResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -106,8 +104,8 @@ class MainViewModel @Inject constructor(
         minerPrefs.saveIp(newIp)
         minerApiService = DynamicApiFactory.create(newIp)
 
-       //// Si quieres, podrías “pingear” automáticamente para comprobar que el servidor responde:
-       //checkServer()
+        //// Si quieres, podrías “pingear” automáticamente para comprobar que el servidor responde:
+        //checkServer()
     }
 
 
@@ -237,6 +235,35 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun getSummaryAndSettings() {
+        Log.d("MainViewModel", "getSummary: ${ip.value} ${apiKey.value}")
+        Log.d("MainViewModel", "getSummary: ${appSettingsUiState.value.ip} ${appSettingsUiState.value.apiKey}")
+        Log.d("MainViewModel", "getSummary: ${minerPrefs.getIp()} ${minerPrefs.getApiKey()}")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _advancedUiState.update { it.copy(isLoading = true) }
+            try {
+                val summary = minerApiService?.getSummary(minerPrefs.getApiKey().toString())
+                val settings = minerApiService?.getSettings(minerPrefs.getApiKey().toString())
+                _advancedUiState.update {
+                    it.copy(
+                        summary = summary,
+                        settings = settings,
+                        isLoading = false,
+                    )
+                }
+            } catch (e: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e)
+                _advancedUiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMsg = "Error al consultar hashrate: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
+                    )
+                }
+            }
+        }
+    }
+
     fun getHashrateHistory() {
         viewModelScope.launch(Dispatchers.IO) {
             _advancedUiState.update { it.copy(isLoading = true) }
@@ -288,26 +315,27 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun getSummaryAndSettings() {
-        Log.d("MainViewModel", "getSummary: ${ip.value} ${apiKey.value}")
-        Log.d("MainViewModel", "getSummary: ${appSettingsUiState.value.ip} ${appSettingsUiState.value.apiKey}")
-        Log.d("MainViewModel", "getSummary: ${minerPrefs.getIp()} ${minerPrefs.getApiKey()}")
+
+
+    fun getMetrics1_15() {
+        Log.d("MainViewModel", "getMetrics1_15: ${ip.value} ${apiKey.value}")
+        Log.d("MainViewModel", "getMetrics1_15: ${appSettingsUiState.value.ip} ${appSettingsUiState.value.apiKey}")
+        Log.d("MainViewModel", "getMetrics1_15: ${minerPrefs.getIp()} ${minerPrefs.getApiKey()}")
 
         viewModelScope.launch(Dispatchers.IO) {
-            _advancedUiState.update { it.copy(isLoading = true) }
+            _basicUiState.update { it.copy(isLoading = true) }
             try {
-                val summary = minerApiService?.getSummary(minerPrefs.getApiKey().toString())
-                val settings = minerApiService?.getSettings(minerPrefs.getApiKey().toString())
-                _advancedUiState.update {
+                val metrics = minerApiService?.getMetrics1_15()
+                Log.d("MainViewModel", "Metrics: $metrics")
+                _basicUiState.update {
                     it.copy(
-                        summary = summary,
-                        settings = settings,
                         isLoading = false,
+                        metrics = metrics?.metrics
                     )
                 }
             } catch (e: Exception) {
                 FirebaseCrashlytics.getInstance().recordException(e)
-                _advancedUiState.update {
+                _basicUiState.update {
                     it.copy(
                         isLoading = false,
                         errorMsg = "Error al consultar hashrate: ${e.message} ip: ${minerPrefs.getIp()} apiKey: ${minerPrefs.getApiKey()}"
@@ -316,6 +344,8 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+
 
     fun isValidIpOrDomain(ip: String): Boolean {
         val ipPattern = Regex("^(http://|https://)?(([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}|(\\d{1,3}\\.){3}\\d{1,3})$")
@@ -437,7 +467,8 @@ data class BasicUiState(
     var showSuccessMessage: Boolean = false,
     var errorMsg: String? = null,
     var isLoading: Boolean = false,
-    var minerInfo: MinerInfo? = null
+    var minerInfo: MinerInfo? = null,
+    var metrics: List<MetricEntry>? = null,
 )
 
 data class AdvancedUiState(
