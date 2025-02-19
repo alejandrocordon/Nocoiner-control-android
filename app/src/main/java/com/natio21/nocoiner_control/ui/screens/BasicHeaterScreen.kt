@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.natio21.nocoiner_control.DateTimeUtils
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrange44
@@ -49,11 +50,14 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
 import com.patrykandpatrick.vico.core.cartesian.Scroll
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
@@ -61,9 +65,12 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.ColumnProvider.Companion.series
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun BasicHeaterScreen(
@@ -265,88 +272,6 @@ fun BasicHeaterScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                fun convertUnixTimeToReadable(unixTime: Long): String {
-                    val instant = Instant.ofEpochSecond(unixTime)
-                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        .withZone(ZoneId.systemDefault())
-                    return formatter.format(instant)
-                }
-
-                //method get hour in integer from unix time
-                fun getHour(unixTime: Long): Int {
-                    val instant = Instant.ofEpochSecond(unixTime)
-                    val formatter = DateTimeFormatter.ofPattern("HH")
-                        .withZone(ZoneId.systemDefault())
-                    return formatter.format(instant).toInt()
-                }
-
-
-
-                metrics?.let {
-                    val hashrates = it.map { metric -> metric.data.hashrate }
-                    val power_consumption = it.map { metric -> metric.data.power_consumption }
-                    val fan_duty = it.map { metric -> metric.data.fan_duty }
-                    val chip_max_temp = it.map { metric -> metric.data.chip_max_temp }
-                    val pcb_max_temp = it.map { metric -> metric.data.pcb_max_temp }
-
-                    val times = it.map { metric -> getHour(metric.time) }
-                    //val x = (times).toList()
-                    //val y = hashrates
-                    val x = (2010..2023).toList()
-                    //val y = listOf<Number>(0.28, 1.4, 3.1, 5.8, 15, 22, 29, 39, 49, 56, 75, 86, 89, 93)
-
-
-                    val modelProducerHashrate = remember { CartesianChartModelProducer() }
-                    LaunchedEffect(Unit) {
-                        modelProducerHashrate.runTransaction {
-                            columnSeries { series(times, hashrates)  }
-                        }
-                    }
-                    CartesianChartHost(
-                        rememberCartesianChart(
-                            rememberColumnCartesianLayer(),
-                            startAxis = VerticalAxis.rememberStart(),
-                            bottomAxis = HorizontalAxis.rememberBottom(),
-                        ),
-                        modelProducerHashrate,
-                    )
-
-                    val modelProducerPower = remember { CartesianChartModelProducer() }
-                    LaunchedEffect(Unit) {
-                        modelProducerPower.runTransaction {
-                            columnSeries { series(times, power_consumption)  }
-                        }
-                    }
-                    CartesianChartHost(
-                        rememberCartesianChart(
-                            rememberColumnCartesianLayer(),
-                            startAxis = VerticalAxis.rememberStart(),
-                            bottomAxis = HorizontalAxis.rememberBottom(),
-                        ),
-                        modelProducerPower,
-                    )
-
-                    for (metric in it) {
-
-                        Text(
-                            text = buildAnnotatedString {
-                                append("Hashrate ${metric.data.hashrate}: ")
-                                withStyle(
-                                    style = SpanStyle(
-                                        fontSize = 10.sp,
-                                        color = NatioOrangeDD
-                                    )
-                                ) {
-                                    append("${getHour(metric.time)} --- ${convertUnixTimeToReadable(metric.time)} TH/s")
-                                }
-                            },
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }

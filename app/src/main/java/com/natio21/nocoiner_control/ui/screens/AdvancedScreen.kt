@@ -1,5 +1,6 @@
 package com.natio21.nocoiner_control.ui.screens;
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -23,8 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,19 +37,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.natio21.nocoiner_control.DateTimeUtils
 import com.natio21.nocoiner_control.MainViewModel
 import com.natio21.nocoiner_control.R
 import com.natio21.nocoiner_control.ui.theme.NatioOrangeDD
 import com.natio21.nocoiner_control.ui.theme.NocoinercontrolTheme
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasuringContext
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 @Composable
 fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
+    val uiState by viewModel.basicUiState.collectAsState()
     val advancedState by viewModel.advancedUiState.collectAsState()
     val isDarkTheme = isSystemInDarkTheme()
     val colorFilter = if (isDarkTheme) ColorFilter.tint(Color.Gray) else null
+    val metrics = uiState.metrics
+
 
     NocoinercontrolTheme {
         LazyColumn(
@@ -111,6 +133,73 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
             val hashrateMatix = listOf(hasrateTitles, hashrateInfo)
             item { MatrixDashboardCard(title = "Hashrate", dataMatrix = hashrateMatix) }
 
+
+            item {
+                metrics?.let {
+                    val hashrates = it.map { metric -> metric.data.hashrate }
+                    val power_consumption = it.map { metric -> metric.data.power_consumption }
+                    val fan_duty = it.map { metric -> metric.data.fan_duty }
+                    val chip_max_temp = it.map { metric -> metric.data.chip_max_temp }
+                    val pcb_max_temp = it.map { metric -> metric.data.pcb_max_temp }
+
+                    val times = it.map { metric -> DateTimeUtils.getHour(metric.time) }
+
+
+                    val timesHours =
+                        it.map { metric -> DateTimeUtils.convertUnixTimeToReadable(metric.time) }
+
+
+                    //Log arrays sizes
+                    Log.d("HomeScreen", "hashrates size: ${hashrates.size}")
+                    Log.d("HomeScreen", "power_consumption size: ${power_consumption.size}")
+                    Log.d("HomeScreen", "fan_duty size: ${fan_duty.size}")
+                    Log.d("HomeScreen", "chip_max_temp size: ${chip_max_temp.size}")
+                    Log.d("HomeScreen", "pcb_max_temp size: ${pcb_max_temp.size}")
+                    Log.d("HomeScreen", "times size: ${times.size}")
+                    Log.d("HomeScreen", "timesHours size: ${timesHours.size}")
+
+
+                    Text(
+                        "HASHRATE",
+                        fontWeight = FontWeight.Normal,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+
+                    val modelProducerHashrate = remember { CartesianChartModelProducer() }
+                    LaunchedEffect(Unit) {
+                        modelProducerHashrate.runTransaction {
+                            columnSeries { series(times, hashrates) }
+                        }
+                    }
+                    CartesianChartHost(
+                        rememberCartesianChart(
+                            rememberColumnCartesianLayer(
+                                //color orange
+
+                            ),
+                            startAxis = VerticalAxis.rememberStart(),
+                            bottomAxis = HorizontalAxis.rememberBottom(),
+                        ),
+                        modelProducerHashrate,
+                    )
+
+
+                    val bottomAxisValueFormatter =
+                        object : CartesianValueFormatter {
+
+                            override fun format(
+                                context: CartesianMeasuringContext,
+                                value: Double,
+                                verticalAxisPosition: Axis.Position.Vertical?,
+                                //) = dateFormat.format(value * MS_IN_H)
+                            ) = timesHours[value.toInt()]
+
+                        }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+            }
+
             // Temperature MatrixDashboardCard
             val temperatureInfo: List<String> = listOf(
                 "${advancedState.summary?.miner?.pcb_temp?.min}ºC-${advancedState.summary?.miner?.pcb_temp?.max}ºC",
@@ -119,6 +208,57 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
             val temperatureTitles: List<String> = listOf("PCB Temp", "Chip Temp")
             val temperatureMatrix = listOf(temperatureTitles, temperatureInfo)
             item { MatrixDashboardCard(title = "Temperature", dataMatrix = temperatureMatrix) }
+
+
+            item {
+                metrics?.let {
+                    val hashrates = it.map { metric -> metric.data.hashrate }
+                    val power_consumption = it.map { metric -> metric.data.power_consumption }
+                    val fan_duty = it.map { metric -> metric.data.fan_duty }
+                    val chip_max_temp = it.map { metric -> metric.data.chip_max_temp }
+                    val pcb_max_temp = it.map { metric -> metric.data.pcb_max_temp }
+
+                    val times = it.map { metric -> DateTimeUtils.getHour(metric.time) }
+
+
+                    val timesHours =
+                        it.map { metric -> DateTimeUtils.convertUnixTimeToReadable(metric.time) }
+
+
+                    //Log arrays sizes
+                    Log.d("HomeScreen", "hashrates size: ${hashrates.size}")
+                    Log.d("HomeScreen", "power_consumption size: ${power_consumption.size}")
+                    Log.d("HomeScreen", "fan_duty size: ${fan_duty.size}")
+                    Log.d("HomeScreen", "chip_max_temp size: ${chip_max_temp.size}")
+                    Log.d("HomeScreen", "pcb_max_temp size: ${pcb_max_temp.size}")
+                    Log.d("HomeScreen", "times size: ${times.size}")
+                    Log.d("HomeScreen", "timesHours size: ${timesHours.size}")
+
+
+                    Text(
+                        "TEMPERTATURE ",
+                        fontWeight = FontWeight.Normal,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    val modelProducerTemperature = remember { CartesianChartModelProducer() }
+                    LaunchedEffect(Unit) {
+                        modelProducerTemperature.runTransaction {
+                            columnSeries { series(times, chip_max_temp) }
+                        }
+                    }
+                    CartesianChartHost(
+                        rememberCartesianChart(
+                            rememberColumnCartesianLayer(),
+                            startAxis = VerticalAxis.rememberStart(),
+                            bottomAxis = HorizontalAxis.rememberBottom(),
+                            //bottomAxis = HorizontalAxis.rememberBottom(guideline = null, valueFormatter = bottomAxisValueFormatter),
+
+                        ),
+                        modelProducerTemperature,
+
+                        )
+                }
+            }
 
             // Power MatrixDashboardCard
             val powerInfo: List<String> = listOf(
@@ -129,6 +269,57 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
             val powerMatrix = listOf(powerTitles, powerInfo)
             item { MatrixDashboardCard(title = "Power", dataMatrix = powerMatrix) }
 
+            item {
+                metrics?.let {
+                    val hashrates = it.map { metric -> metric.data.hashrate }
+                    val power_consumption = it.map { metric -> metric.data.power_consumption }
+                    val fan_duty = it.map { metric -> metric.data.fan_duty }
+                    val chip_max_temp = it.map { metric -> metric.data.chip_max_temp }
+                    val pcb_max_temp = it.map { metric -> metric.data.pcb_max_temp }
+
+                    val times = it.map { metric -> DateTimeUtils.getHour(metric.time) }
+
+
+                    val timesHours =
+                        it.map { metric -> DateTimeUtils.convertUnixTimeToReadable(metric.time) }
+
+
+                    //Log arrays sizes
+                    Log.d("HomeScreen", "hashrates size: ${hashrates.size}")
+                    Log.d("HomeScreen", "power_consumption size: ${power_consumption.size}")
+                    Log.d("HomeScreen", "fan_duty size: ${fan_duty.size}")
+                    Log.d("HomeScreen", "chip_max_temp size: ${chip_max_temp.size}")
+                    Log.d("HomeScreen", "pcb_max_temp size: ${pcb_max_temp.size}")
+                    Log.d("HomeScreen", "times size: ${times.size}")
+                    Log.d("HomeScreen", "timesHours size: ${timesHours.size}")
+
+
+                    Text(
+                        "POWER CONSUMPTION",
+                        fontWeight = FontWeight.Normal,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    val modelProducerPower = remember { CartesianChartModelProducer() }
+                    LaunchedEffect(Unit) {
+                        modelProducerPower.runTransaction {
+                            columnSeries { series(times, power_consumption) }
+                        }
+                    }
+                    CartesianChartHost(
+                        rememberCartesianChart(
+                            rememberColumnCartesianLayer(),
+                            startAxis = VerticalAxis.rememberStart(),
+                            bottomAxis = HorizontalAxis.rememberBottom(),
+                            //bottomAxis = HorizontalAxis.rememberBottom(guideline = null, valueFormatter = bottomAxisValueFormatter),
+
+                        ),
+                        modelProducerPower,
+
+                        )
+
+
+                }
+            }
 
             // Pools MatrixDashboardCard
             val poolsTitles: List<String> = listOf("Pool", "Type", "Status", "Lantency")
@@ -175,7 +366,7 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
                     colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Edit Pool",color = Color.White)
+                    Text("Edit Pool", color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
@@ -184,7 +375,7 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
                     colors = ButtonDefaults.buttonColors(NatioOrangeDD),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Go to Miner Web",color = Color.White)
+                    Text("Go to Miner Web", color = Color.White)
                 }
             }
         }

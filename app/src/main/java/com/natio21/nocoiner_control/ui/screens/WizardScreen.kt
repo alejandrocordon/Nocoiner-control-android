@@ -44,6 +44,8 @@ fun WizardScreen(
     val colorFilter =
         if (isDarkTheme) ColorFilter.tint(androidx.compose.ui.graphics.Color.Gray) else null
 
+
+    viewModel.init()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
