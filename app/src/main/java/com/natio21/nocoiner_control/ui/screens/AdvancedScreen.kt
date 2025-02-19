@@ -354,7 +354,55 @@ fun AdvancedScreen(viewModel: MainViewModel, navController: NavController) {
                         } ?: emptyList())
             item { MatrixDashboardCard(title = "Fans", dataMatrix = fansInfo) }
 
+            item {
+                metrics?.let {
+                    val hashrates = it.map { metric -> metric.data.hashrate }
+                    val power_consumption = it.map { metric -> metric.data.power_consumption }
+                    val fan_duty = it.map { metric -> metric.data.fan_duty }
+                    val chip_max_temp = it.map { metric -> metric.data.chip_max_temp }
+                    val pcb_max_temp = it.map { metric -> metric.data.pcb_max_temp }
 
+                    val times = it.map { metric -> DateTimeUtils.getHour(metric.time) }
+
+
+                    val timesHours =
+                        it.map { metric -> DateTimeUtils.convertUnixTimeToReadable(metric.time) }
+
+
+                    //Log arrays sizes
+                    Log.d("HomeScreen", "hashrates size: ${hashrates.size}")
+                    Log.d("HomeScreen", "power_consumption size: ${power_consumption.size}")
+                    Log.d("HomeScreen", "fan_duty size: ${fan_duty.size}")
+                    Log.d("HomeScreen", "chip_max_temp size: ${chip_max_temp.size}")
+                    Log.d("HomeScreen", "pcb_max_temp size: ${pcb_max_temp.size}")
+                    Log.d("HomeScreen", "times size: ${times.size}")
+                    Log.d("HomeScreen", "timesHours size: ${timesHours.size}")
+
+
+                    Text(
+                        "FAN DUTY ",
+                        fontWeight = FontWeight.Normal,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    val modelProducerFans = remember { CartesianChartModelProducer() }
+                    LaunchedEffect(Unit) {
+                        modelProducerFans.runTransaction {
+                            columnSeries { series(times, fan_duty) }
+                        }
+                    }
+                    CartesianChartHost(
+                        rememberCartesianChart(
+                            rememberColumnCartesianLayer(),
+                            startAxis = VerticalAxis.rememberStart(),
+                            bottomAxis = HorizontalAxis.rememberBottom(),
+                            //bottomAxis = HorizontalAxis.rememberBottom(guideline = null, valueFormatter = bottomAxisValueFormatter),
+
+                        ),
+                        modelProducerFans,
+
+                        )
+                }
+            }
 
             item {
                 Spacer(modifier = Modifier.height(16.dp))
