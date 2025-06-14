@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "Nocoiner-control"
 include(":app")
 include(":shared")
+include(":iosApp")
