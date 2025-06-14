@@ -30,7 +30,7 @@
 ## Requirements
 - **Android Studio** (latest version recommended)  
 - **Minimum SDK**: 21 (Lollipop)  
-- **Kotlin** and **Jetpack Compose** for UI  
+- **Kotlin** and **Jetpack Compose** (now using Compose Multiplatform) for UI
 - **Hilt** for dependency injection  
 - **OkHttp/Retrofit** (or similar) to connect to the miner’s API (details may vary)
 
