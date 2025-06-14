@@ -41,7 +41,7 @@
 2. **Open** it in Android Studio.  
 3. **Sync** Gradle, ensuring you have all required plugins (Hilt, Compose, etc.).  
 4. **Run** the Android app on an emulator or physical device connected to the same network as the miner.
-5. **For iOS**, open the `iosApp` project in Xcode and run it on a simulator or device.
+5. **For iOS**, use Android Studio to run the `iosApp` module on a simulator or connected iPhone. You can also open the module in Xcode if preferred.
 6. **On first launch**, the Wizard will prompt for the local IP and API Key. If these are valid, the Basic and Advanced screens will become available.
 
 ---
